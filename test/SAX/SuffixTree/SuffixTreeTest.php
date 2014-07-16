@@ -20,6 +20,14 @@ class SuffixTreeTest extends PHPUnit_Framework_TestCase {
             }
         }
     }
+
+    public function testGetOccurence() {
+        $this->assertEquals(1, $this->suffixTree->getOccurence("mississippi"));
+        $this->assertEquals(2, $this->suffixTree->getOccurence("issi"));
+        $this->assertEquals(1, $this->suffixTree->getOccurence("pi"));
+        $this->assertEquals(4, $this->suffixTree->getOccurence("i"));
+        $this->assertEquals(2, $this->suffixTree->getOccurence("ss"));
+    }
 }
 
 

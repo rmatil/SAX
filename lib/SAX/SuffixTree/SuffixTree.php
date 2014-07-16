@@ -235,6 +235,35 @@ class SuffixTree {
         return $this->findSubstring($this->nodes[$this->root], $pSubstring);
     }
 
+    /**
+     * Returns the amount of occurences of the given string
+     * in the suffix tree. 
+     * Use hasSubstring($pSubstring) to check, if the
+     * given string is contained in the suffix tree.
+     * 
+     * @param  string  $pSubstring String to get the amount of occurences
+     * @return integer             Returns -1, if length of $pSubstring is greater 
+     *                                     than the string represented by the suffix tree.
+     *                                     Else returns the amount of occurences of the
+     *                                     given string.
+     */
+    public function getOccurence($pSubstring) {
+        $substrLength   = strlen($pSubstring);
+        $textLength     = count($this->text);
+        $occurences     = 0;
+
+        if ( $substrLength > $textLength ) {
+            return -1;
+        }
+        $text = implode( '', $this->text );
+        for ($i=0; $i < $textLength - $substrLength + 1; $i++) { 
+            if ( substr( $text, $i, $substrLength ) === $pSubstring ) {
+                ++$occurences;
+            }
+        }
+        return $occurences;
+    }
+
     public function __toString() {
         $s = "Start \tEnd \tLink \tidx \tchildren \n";
         foreach ($this->nodes as $node) {
