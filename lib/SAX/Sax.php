@@ -19,7 +19,13 @@ class Sax {
 
     private $analysisStatistics;
 
-    public function __construct( array $pReferenceTimeSeries, array $pAnalysisTimeSeries) {
+    private $alphabet;
+
+    private $alphabetSize;
+
+    private $breakpoints;
+
+    public function __construct( array $pReferenceTimeSeries, array $pAnalysisTimeSeries, $pAlphabetSize = 5) {
         if ( count( $pReferenceTimeSeries ) < 1) {
             throw new Exception("Reference time series must contain some elements.");
         }
@@ -46,9 +52,15 @@ class Sax {
 
         $this->referenceTimeSeries  = $pReferenceTimeSeries;
         $this->analysisTimeSeries   = $pAnalysisTimeSeries;
+        $this->alphabetSize         = $pAlphabetSize;
+
+        $this->initAlphabet();
+        $this->initBreakpoints();
     }
 
     public function computeStatistics( array $pTimeSeries ) {
+        // TODO: assume count and time as keys in time series
+        //       secured they exist in constructor
         $statistics = array('min'       => 0,
                             'max'       => 0,
                             'stdDev'    => 0,
@@ -128,6 +140,52 @@ class Sax {
             unset($timeSeries);
         }
         return $pTimeSeries;
+    }
+
+    public function discretizeTimeSeries( array $pTimeSeries ) {
+        $nrOfBreakpoints = $this->alphabetSize - 1;
+        $breakpoints     = $this->breakpoints[$nrOfBreakpoints];
+        $saxWord         = "";
+
+        // discretize reference time series
+        foreach ( $pTimeSeries as $datapoint ) {
+            for ( $i=0; $i < $nrOfBreakpoints + 1; $i++ ) {
+                if ( $datapoint['count'] < $breakpoints[$i] ) {
+                    // found first matching interval 
+                    $saxWord .= $this->alphabet[$i];
+                    break;
+                } elseif ( $i === $nrOfBreakpoints && $datapoint['count'] >= $breakpoints[$i] ) {
+                    // last datapoint, is greater than the last breakpoint
+                    $saxWord .= $this->alphabet[$i];
+                }
+            }
+        }
+
+        return $saxWord;
+    }
+
+
+    private function initBreakpoints() {
+        // TODO: try to compute dynamically
+        $this->breakpoints[0]   = -1;
+        $this->breakpoints[1]   = -1;
+        $this->breakpoints[2]   = array(-0.43, 0.43);
+        $this->breakpoints[3]   = array(-0.67, 0, 0.67);
+        $this->breakpoints[4]   = array(-0.84, -0.25, 0.25, 0.84);
+        $this->breakpoints[5]   = array(-0.97, -0.43, 0, 0.43, 0.97);
+        $this->breakpoints[6]   = array(-1.07, -0.57, -0.18, 0.18, 0.57, 1.07);
+        $this->breakpoints[7]   = array(-1.15, -0.67, -0.32, 0, 0.32, 0.67, 1.15);
+        $this->breakpoints[8]   = array(-1.22, -0.76, -0.43, -0.14, 0.14, 0.43, 0.76, 1.22);
+        $this->breakpoints[9]   = array(-1.28, -0.84, -0.52, -0.25, 0, 0.25, 0.52, 0.84, 1.28);
+    }
+
+    private function initAlphabet() {
+        $this->alphabet = array("a", "b", "c", "d", "e", 
+                                "f", "g", "h", "i", "j",
+                                "k", "l", "m", "n", "o",
+                                "p", "q", "r", "s", "t", 
+                                "u", "v", "w", "x", "y", 
+                                "z");
     }
 }
 ?>
