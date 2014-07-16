@@ -7,10 +7,8 @@ class Sax {
 
     private $analysisTimeSeries;
 
-    private $referenceString;
-
-    private $analysisStrings;
-
+    // TODO: create method to make 
+    // a whole process of sax
     private $saxReferenceString;
 
     private $saxAnalysisStrings;
@@ -56,6 +54,23 @@ class Sax {
 
         $this->initAlphabet();
         $this->initBreakpoints();
+    }
+
+    public function preprocess( $pSaxReferenceString, array $pSaxAnalysisStrings) {
+        // TODO: check if data is discretized+
+        $referenceTree  = new SuffixTree($pSaxReferenceString);
+        echo $referenceTree;
+
+        $analysisTrees  = array();
+        foreach ($pSaxAnalysisStrings as $anaString) {
+            $analysisTrees[] = new SuffixTree($anaString);
+        }
+
+        // TODO: surprise values?
+    }
+
+    public function tarzan() {
+        throw new Exception("TODO: implement");
     }
 
     public function computeStatistics( array $pTimeSeries ) {

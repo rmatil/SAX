@@ -157,6 +157,43 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 'eeccec', $saxAnaWord[2] );
     }
 
+    public function testPreprocess() {
+        $sax = new Sax( self::$referenceTimeSeries, self::$analysisTimeSeries);
+
+        // normalize reference series
+        $series = array();
+        foreach (self::$referenceTimeSeries as $entry) {
+            $series[] = $entry['count'];
+        }
+        // compute statistics of unnormalized series
+        $statistics = $sax->computeStatistics($series);
+        $normalizedReferenceSeries = $sax->normalizeTimeSeries( self::$referenceTimeSeries,
+                                                                $statistics['mean'],
+                                                                $statistics['stdDev'], 
+                                                                true);
+
+        
+        // compute statistics again, this time from normalized reference series
+        foreach ($normalizedReferenceSeries as $entry) {
+            $series[] = $entry['count'];
+        }
+        // compute statistics of unnormalized series
+        $statistics = $sax->computeStatistics($series);
+        // normalize analysis time series using statistics of the reference string
+        $normalizedAnalysisSeries = $sax->normalizeTimeSeries( self::$analysisTimeSeries, 
+                                                                $statistics['mean'], 
+                                                                $statistics['stdDev'],
+                                                                false);
+        $saxRefWord = $sax->discretizeTimeSeries($normalizedReferenceSeries);
+        $saxAnaWord = array();
+        foreach ($normalizedAnalysisSeries as $timeSeries) {
+            $saxAnaWord[] = $sax->discretizeTimeSeries($timeSeries);
+        }
+
+        $sax->preprocess($saxRefWord, $saxAnaWord);
+        
+    }
+
 
 
 }
