@@ -181,13 +181,10 @@ class Sax {
                                                                   $refStatistics['stdDev'], 
                                                                   true );
 
-        $normalizedAnaSeries        = array();
-        foreach ( $this->analysisTimeSeries as $timeSeries ) {
-            $normalizedAnaSeries[] = $this->normalizeTimeSeries( $timeSeries, 
-                                                                 $refStatistics['mean'], 
-                                                                 $refStatistics['stdDev'], 
-                                                                 false );
-        }
+        $normalizedAnaSeries = $this->normalizeTimeSeries( $this->analysisTimeSeries, 
+                                                             $refStatistics['mean'], 
+                                                             $refStatistics['stdDev'], 
+                                                             false );
 
         // create sax words
         $refSaxWord         = $this->discretizeTimeSeries( $normalizedRefSeries, $pScanningWindowLength );
@@ -203,19 +200,18 @@ class Sax {
         $surprises = array();
         foreach ( $annotatedAnaTrees as $anaTree ) {
             // retreive surprise values for each substring
-            foreach ( $anaSaxWords as $anaSaxWord ) {
-                for ($i=0; $i < strlen( $anaSaxWord ) - $pScanningWindowLength; $i++) { 
-                    $w          = substr( $anaSaxWord, $i, $pScanningWindowLength );
-                    $surprise   = $anaTree->getSurpriseValue( $w );
+            $anaSaxWord = implode( '', $anaTree->text );
+            for ($i=0; $i < strlen( $anaSaxWord ) - $pScanningWindowLength; $i++) { 
+                $w          = substr( $anaSaxWord, $i, $pScanningWindowLength );
+                $surprise   = $anaTree->getSurpriseValue( $w );
 
-                    if ( $surprise >= $pThreshold ) {
-                        $surprises[$anaSaxWord][] = array( $i, $surprise ); 
-                    }
+                if ( $surprise >= $pThreshold ) {
+                    $surprises[$anaSaxWord][] =  array( $i, $surprise );
                 }
-            }
+            }            
         }
 
-        return $surprise;
+        return $surprises;
     }
 
     /**
@@ -273,7 +269,7 @@ class Sax {
      * @param  bool $isReference  True, if $pTimeSeries represents the reference timeseries
      * @return array              The normalized timeseries
      */
-    public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $isReference) {
+    public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $isReference ) {
         if ( $isReference ) {
             $this->referenceStatistics = $this->computeStatistics( $pTimeSeries );
 
