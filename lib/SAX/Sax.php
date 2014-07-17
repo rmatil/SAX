@@ -69,7 +69,8 @@ class Sax {
      * @param  string $pSaxReferenceString Discretized reference string (i.e. sax word)
      * @param  array  $pSaxAnalysisStrings Array of discretized string representing
      *                                     the time series under analysis
-     * @return [type]                      [description]
+     * @return array                       Returns an array containing the analysis 
+     *                                     trees annotated with their surprise values
      */
     public function preprocess( $pSaxReferenceString, array $pSaxAnalysisStrings) {
         $this->referenceSuffixTree = new SuffixTree($pSaxReferenceString);
@@ -79,16 +80,17 @@ class Sax {
             $this->annotateSurpriseValues( $this->referenceSuffixTree, $anaTree );
             $this->analysisSuffixTree[] = $anaTree;
         }
-        // TODO: return annotated trees?
+        
+        return $this->analysisSuffixTree;
     }
 
-    public function tarzan() {
-        throw new Exception("TODO: implement");
+
+    public function tarzan( $pReferenceSaxWord, $pAnalysisSaxWord) {
+        
+
     }
 
     public function computeStatistics( array $pTimeSeries ) {
-        // TODO: assume count and time as keys in time series
-        //       secured they exist in constructor
         $statistics = array('min'       => 0,
                             'max'       => 0,
                             'stdDev'    => 0,
@@ -151,7 +153,7 @@ class Sax {
                 $this->analysisStatistics[] = $this->computeStatistics( $timeSeries );
 
                 // normalize
-                foreach ($timeSeries as &$entry) {
+                foreach ( $timeSeries as &$entry ) {
                     $entry['count'] = ( $entry['count'] - $pMean ) / $pStdDev;
                 }
                 unset($entry);
@@ -161,21 +163,38 @@ class Sax {
         return $pTimeSeries;
     }
 
-    public function discretizeTimeSeries( array $pTimeSeries ) {
+    /**
+     * Discretizes a given time series to a "sax word", i.e. a sequence
+     * of characters indicating the amplitude of the time series.
+     * @param  array   $pTimeSeries         Time series to discretize
+     * @param  integer $featureWindowLength Amount of datapoints which will used as a single 
+     *                                      datapoint (by computing the mean), default is one
+     * @return string                       The sax word
+     */
+    public function discretizeTimeSeries( array $pTimeSeries, $featureWindowLength = 1 ) {
         $nrOfBreakpoints = $this->alphabetSize - 1;
         $breakpoints     = $this->breakpoints[$nrOfBreakpoints];
         $saxWord         = "";
 
         // discretize reference time series
-        foreach ( $pTimeSeries as $datapoint ) {
-            for ( $i=0; $i < $nrOfBreakpoints + 1; $i++ ) {
-                if ( $datapoint['count'] < $breakpoints[$i] ) {
+        for ( $i=0; $i < count( $pTimeSeries ); $i+=$featureWindowLength ) { 
+            $datapoint = $pTimeSeries[$i]['count'];
+
+            // dimensionality reduction using mean
+            for ( $j=$i+1; $j < $featureWindowLength; $j++ ) { 
+                $datapoint += $pTimeSeries[$j]['count'];
+            }
+            $datapoint /= $featureWindowLength;
+
+            // discretize to sax word using breakpoints        
+            for ( $z=0; $z < $nrOfBreakpoints + 1; $z++ ) {
+                if ( $datapoint < $breakpoints[$z] ) {
                     // found first matching interval 
-                    $saxWord .= $this->alphabet[$i];
+                    $saxWord .= $this->alphabet[$z];
                     break;
-                } elseif ( $i === $nrOfBreakpoints && $datapoint['count'] >= $breakpoints[$i] ) {
+                } elseif ( $z === $nrOfBreakpoints && $datapoint >= $breakpoints[$z] ) {
                     // last datapoint, is greater than the last breakpoint
-                    $saxWord .= $this->alphabet[$i];
+                    $saxWord .= $this->alphabet[$z];
                 }
             }
         }
@@ -291,7 +310,6 @@ class Sax {
 
 
     private function initBreakpoints() {
-        // TODO: try to compute dynamically
         $this->breakpoints[0]   = -1;
         $this->breakpoints[1]   = -1;
         $this->breakpoints[2]   = array(-0.43, 0.43);
@@ -313,4 +331,4 @@ class Sax {
                                 "z");
     }
 }
-?>
+?>*
