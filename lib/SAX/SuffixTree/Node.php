@@ -47,7 +47,7 @@ class Node {
      * @param integer $pEnd       End index of substring in SuffixTree->text
      * @param integer $pNodeIndex Index of this node in SuffixTree->nodes
      */
-    public function __construct($pStart, $pEnd, $pNodeIndex) {
+    public function __construct( $pStart, $pEnd, $pNodeIndex ) {
         $this->next         = array();
         $this->start        = $pStart;
         $this->end          = $pEnd;
@@ -55,7 +55,7 @@ class Node {
         $this->nodeIndex    = $pNodeIndex;
     }
 
-    public function edgeLength($pCurrentPosition) {
+    public function edgeLength( $pCurrentPosition ) {
         return min( $this->end, $pCurrentPosition + 1 ) - $this->start;
     }
 }
