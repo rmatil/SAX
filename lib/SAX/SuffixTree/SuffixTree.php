@@ -10,22 +10,22 @@ class SuffixTree {
     public $nodes;
 
     /**
-     * Representing infinitive
+     * Index of root node
      * @var integer
      */
-    private $upperBound;
+    public $root;
 
     /**
      * String on which this tree is built
      * @var string
      */
-    private $text;
+    public $text;
 
     /**
-     * Index of root node
+     * Representing infinitive
      * @var integer
      */
-    private $root;
+    private $upperBound;
 
     /**
      * Current position in $text
@@ -265,14 +265,14 @@ class SuffixTree {
     }
 
     public function __toString() {
-        $s = "Start \tEnd \tLink \tidx \tchildren \n";
+        $s = "\nStart \tEnd \tLink \tidx \tsurprise value \tchildren\n";
         foreach ($this->nodes as $node) {
             $substrings = "";
             $keys = array_keys($node->next);
             
             foreach ($keys as $key) {
-                $substrings .= $key." => ".$node->next[$key]."\n";
-                $substrings .= "\t \t \t \t";
+                $substrings .= "\t".$key." => ".$node->next[$key]."\n";
+                $substrings .= "\t \t \t \t \t";
             }
 
             $end = $node->end;
@@ -280,7 +280,7 @@ class SuffixTree {
                 $end = "inf";
             }
 
-            $s .= sprintf("%s \t%s \t%s \t%s \t%s \n", $node->start, $end, $node->link, $node->nodeIndex, $substrings);
+            $s .= sprintf("%s \t%s \t%s \t%s \t%s \t%s \n", $node->start, $end, $node->link, $node->nodeIndex, $node->surpriseValue, $substrings);
         }
         return $s;
     }
