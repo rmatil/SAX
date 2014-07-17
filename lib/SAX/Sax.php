@@ -3,6 +3,10 @@ include("SuffixTree/SuffixTree.php");
 
 class Sax {
 
+    public $referenceSuffixTree;
+
+    public $analysisSuffixTree;
+
     private $referenceTimeSeries;
 
     private $analysisTimeSeries;
@@ -51,6 +55,7 @@ class Sax {
         $this->referenceTimeSeries  = $pReferenceTimeSeries;
         $this->analysisTimeSeries   = $pAnalysisTimeSeries;
         $this->alphabetSize         = $pAlphabetSize;
+        $this->analysisSuffixTree   = array();
 
         $this->initAlphabet();
         $this->initBreakpoints();
@@ -67,16 +72,14 @@ class Sax {
      * @return [type]                      [description]
      */
     public function preprocess( $pSaxReferenceString, array $pSaxAnalysisStrings) {
-        $referenceTree  = new SuffixTree($pSaxReferenceString);
-        echo $referenceTree;
+        $this->referenceSuffixTree = new SuffixTree($pSaxReferenceString);
 
-        $analysisTrees  = array();
         foreach ($pSaxAnalysisStrings as $anaString) {
             $anaTree = new SuffixTree($anaString);
-            $this->annotateSurpriseValues( $referenceTree, $anaTree );
-
-            $analysisTrees[] = $anaTree;
+            $this->annotateSurpriseValues( $this->referenceSuffixTree, $anaTree );
+            $this->analysisSuffixTree[] = $anaTree;
         }
+        // TODO: return annotated trees?
     }
 
     public function tarzan() {
@@ -94,21 +97,21 @@ class Sax {
                             'size'      => count( $pTimeSeries ) );
 
         foreach ( $pTimeSeries as $entry ) {
-            if ( $entry < $statistics['min'] ) {
-                $statistics['min'] = $entry;
+            if ( $entry['count'] < $statistics['min'] ) {
+                $statistics['min'] = $entry['count'];
             }
-            if ( $entry > $statistics['max'] ) {
-                $statistics['max'] = $entry;
+            if ( $entry['count'] > $statistics['max'] ) {
+                $statistics['max'] = $entry['count'];
             }
 
-            $statistics['sum'] += $entry;
+            $statistics['sum'] += $entry['count'];
         }
 
         $statistics['mean'] = $statistics['sum'] / $statistics['size'];
 
         // standard deviation
         foreach ($pTimeSeries as $entry) {
-            $statistics['stdDev'] += pow( $entry - $statistics['mean'], 2 );
+            $statistics['stdDev'] += pow( $entry['count'] - $statistics['mean'], 2 );
         }
         if ( $statistics['size'] > 1 ) {
             $statistics['stdDev'] = sqrt( $statistics['stdDev'] / ( $statistics['size'] ) );
@@ -135,12 +138,7 @@ class Sax {
      */
     public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $isReference) {
         if ( $isReference ) {
-
-            $refSeries = array();
-            foreach ($pTimeSeries as $entry) {
-                $refSeries[] = $entry['count'];
-            }
-            $this->referenceStatistics = $this->computeStatistics( $refSeries );
+            $this->referenceStatistics = $this->computeStatistics( $pTimeSeries );
 
             // normalize
             foreach ( $pTimeSeries as &$entry ) {
@@ -150,11 +148,7 @@ class Sax {
 
         } else {
             foreach ( $pTimeSeries as &$timeSeries ) {
-                $analysisSeries = array();
-                foreach ($timeSeries as $entry) {
-                    $analysisSeries[] = $entry['count'];
-                }
-                $this->analysisStatistics[] = $this->computeStatistics( $analysisSeries );
+                $this->analysisStatistics[] = $this->computeStatistics( $timeSeries );
 
                 // normalize
                 foreach ($timeSeries as &$entry) {
@@ -196,14 +190,13 @@ class Sax {
      * @param SuffixTree $pReferenceTree Suffix tree of the reference time series
      * @param SuffixTree $pAnalysisTree  Suffix tree of the time series under analysis
      */
-    public function annotateSurpriseValues( $pReferenceTree , $pAnalysisTree) {
+    public function annotateSurpriseValues( &$pReferenceTree , &$pAnalysisTree) {
         $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$pAnalysisTree->root], "" );
     }
 
-    private function annotateNode( SuffixTree $pReferenceTree, SuffixTree $pAnalysisTree, Node $pNode, $representedString ) {
+    private function annotateNode( SuffixTree &$pReferenceTree, SuffixTree &$pAnalysisTree, Node &$pNode, $representedString ) {
         if ( $pNode->start != -1 && $pNode->end != -1 ) {
             // is not the root node
-            
             $word               = implode( '', $pAnalysisTree->text );
             $representedString .= substr( $word, $pNode->start, $pNode->end - $pNode->start );
 
@@ -266,7 +259,7 @@ class Sax {
 
         // annotate children
         foreach ( $pNode->next as $childKey => $childValue ) {
-            $this->annotateNode( $pReferenceTree, $pAnalysisTree->nodes[$childValue], $representedString );
+            $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$childValue], $representedString );
         }
     }
 

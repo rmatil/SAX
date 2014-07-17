@@ -83,11 +83,7 @@ class SaxTest extends PHPUnit_Framework_TestCase {
     public function testComputeStatistics() {
         $sax = new Sax( self::$referenceTimeSeries, self::$analysisTimeSeries );
 
-        $series = array();
-        foreach (self::$referenceTimeSeries as $entry) {
-            $series[] = $entry['count'];
-        }
-        $statistics = $sax->computeStatistics($series);
+        $statistics = $sax->computeStatistics(self::$referenceTimeSeries);
 
         $this->assertEquals( 3, $statistics['mean'] );
         $this->assertEquals( 0, $statistics['min'] );
@@ -99,12 +95,7 @@ class SaxTest extends PHPUnit_Framework_TestCase {
 
     public function testNormalizeTimeSeriesTest() {
         $sax = new Sax( self::$referenceTimeSeries, self::$analysisTimeSeries );
-
-        $series = array();
-        foreach (self::$referenceTimeSeries as $entry) {
-            $series[] = $entry['count'];
-        }
-        $statistics = $sax->computeStatistics($series);
+        $statistics = $sax->computeStatistics(self::$referenceTimeSeries);
 
         $normalizedAnalysisSeries = $sax->normalizeTimeSeries( self::$analysisTimeSeries, 
                                                                 $statistics['mean'], 
@@ -124,22 +115,15 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         // normalize reference series
         $series = array();
         foreach (self::$referenceTimeSeries as $entry) {
-            $series[] = $entry['count'];
+            $series[] = $entry;
         }
         // compute statistics of unnormalized series
-        $statistics = $sax->computeStatistics($series);
+        $statistics = $sax->computeStatistics(self::$referenceTimeSeries);
         $normalizedReferenceSeries = $sax->normalizeTimeSeries( self::$referenceTimeSeries,
                                                                 $statistics['mean'],
                                                                 $statistics['stdDev'], 
                                                                 true);
 
-        
-        // compute statistics again, this time from normalized reference series
-        foreach ($normalizedReferenceSeries as $entry) {
-            $series[] = $entry['count'];
-        }
-        // compute statistics of unnormalized series
-        $statistics = $sax->computeStatistics($series);
         // normalize analysis time series using statistics of the reference string
         $normalizedAnalysisSeries = $sax->normalizeTimeSeries( self::$analysisTimeSeries, 
                                                                 $statistics['mean'], 
@@ -152,33 +136,21 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         }
 
         $this->assertEquals( 'baedea', $saxRefWord );
-        $this->assertEquals( 'accaee', $saxAnaWord[0] );
-        $this->assertEquals( 'eecebe', $saxAnaWord[1] );
-        $this->assertEquals( 'eeccec', $saxAnaWord[2] );
+        $this->assertEquals( 'aabaee', $saxAnaWord[0] );
+        $this->assertEquals( 'eebeae', $saxAnaWord[1] );
+        $this->assertEquals( 'eebaeb', $saxAnaWord[2] );
     }
 
     public function testPreprocess() {
         $sax = new Sax( self::$referenceTimeSeries, self::$analysisTimeSeries);
 
-        // normalize reference series
-        $series = array();
-        foreach (self::$referenceTimeSeries as $entry) {
-            $series[] = $entry['count'];
-        }
         // compute statistics of unnormalized series
-        $statistics = $sax->computeStatistics($series);
+        $statistics = $sax->computeStatistics(self::$referenceTimeSeries);
         $normalizedReferenceSeries = $sax->normalizeTimeSeries( self::$referenceTimeSeries,
                                                                 $statistics['mean'],
                                                                 $statistics['stdDev'], 
                                                                 true);
 
-        
-        // compute statistics again, this time from normalized reference series
-        foreach ($normalizedReferenceSeries as $entry) {
-            $series[] = $entry['count'];
-        }
-        // compute statistics of unnormalized series
-        $statistics = $sax->computeStatistics($series);
         // normalize analysis time series using statistics of the reference string
         $normalizedAnalysisSeries = $sax->normalizeTimeSeries( self::$analysisTimeSeries, 
                                                                 $statistics['mean'], 
@@ -190,13 +162,13 @@ class SaxTest extends PHPUnit_Framework_TestCase {
             $saxAnaWord[] = $sax->discretizeTimeSeries($timeSeries);
         }
 
-        $sax->preprocess($saxRefWord, $saxAnaWord);
-        
+        // surprise values should be 0
+        $sax->preprocess($saxRefWord, array($saxRefWord));
+
+        // each node must have surprise = 0
+        foreach ( $sax->analysisSuffixTree[0]->nodes as $node ) {
+            $this->assertEquals(0, $node->surpriseValue);
+        }
     }
-
-
-
 }
-
-
 ?>
