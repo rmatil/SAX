@@ -3,33 +3,104 @@ include("SuffixTree/SuffixTree.php");
 
 class Sax {
 
+    /**
+     * Tree representing all suffixes of 
+     * the reference "sax word"
+     * @var SuffixTree
+     */
     public $referenceSuffixTree;
 
+    /**
+     * Trees representing all suffixes 
+     * of the analysis sax words
+     * @var SuffixTree
+     */
     public $analysisSuffixTree;
 
+    /**
+     * Time series used as reference. Must 
+     * contain keys 'count' and 'time'
+     * @var array
+     */
     private $referenceTimeSeries;
 
+    /**
+     * Array of time series under analysis.
+     * Contains on each entry arrays representing time series.
+     * These must contain keys 'count' and 'time'
+     * @var array
+     */
     private $analysisTimeSeries;
 
-    // TODO: create method to make 
-    // a whole process of sax
+    /**
+     * Normalized and discretized reference time series represented 
+     * by a string over the alphabet $alphabet.
+     * @var string
+     */
     private $saxReferenceString;
 
+    /**
+     * Array of ormalized and discretized 
+     * analysis time series represented 
+     * by a string over the alphabet $alphabet.
+     * @var array
+     */
     private $saxAnalysisStrings;
 
+    /**
+     * Statistics of the reference time series, such as
+     * min, max, mean, standard deviation, sum, number of entries
+     * @var array
+     */
     private $referenceStatistics;
 
+    /**
+     * Array of statistical values of the analysis time series, such as
+     * min, max, mean, standard deviation, sum, number of entries
+     * @var array
+     */
     private $analysisStatistics;
 
+    /**
+     * The alphabet used to generate the 
+     * "sax words"
+     * @var array
+     */
     private $alphabet;
 
+    /**
+     * Size of characters used to generate
+     * the "sax words"
+     * @var integer
+     */
     private $alphabetSize;
 
+    /**
+     * Breakpoints needed to discretize
+     * a time series to a sax word
+     * @var array
+     */
     private $breakpoints;
 
+    /**
+     * [__construct description]
+     * @param array   $pReferenceTimeSeries Time series used as reference. Must contain 
+     *                                      keys 'count' and 'time' on each entry.
+     *                                      Count represents the number of occurences
+     *                                      of an attribute at 'time'
+     * @param array   $pAnalysisTimeSeries  Array of time series to analyse. Each time series
+     *                                      must contain the keys 'count' and 'time' on each entry.
+     *                                      Count represents the number of occurences of an 
+     *                                      attribute at 'time'
+     * @param integer $pAlphabetSize        Size of the alphabet used for discretization process.
+     *                                      Must be greater than 2 and smaller than 11
+     */
     public function __construct( array $pReferenceTimeSeries, array $pAnalysisTimeSeries, $pAlphabetSize = 5) {
+        if ( $pAlphabetSize < 3 || $pAlphabetSize > 10 ) {
+            throw new Exception( "Alphabet size must be greater than 2 and smaller than 11." );
+        }
         if ( count( $pReferenceTimeSeries ) < 1) {
-            throw new Exception("Reference time series must contain some elements.");
+            throw new Exception( "Reference time series must contain some elements." );
         }
 
         if ( count( $pAnalysisTimeSeries ) < 1 ) {
@@ -39,7 +110,7 @@ class Sax {
         foreach ($pReferenceTimeSeries as $entry) {
             if ( !isset($entry['count']) ||
                  !isset($entry['time'])) {
-                throw new Exception("Reference time series must contain keys 'count' and 'time' in each element.");
+                throw new Exception( "Reference time series must contain keys 'count' and 'time' in each element." );
             }    
         }
 
@@ -47,14 +118,14 @@ class Sax {
             foreach ($timeSeries as $entry) {
                 if ( !isset($entry['count']) ||
                      !isset($entry['time'])) {
-                    throw new Exception("Analysis time series must contain keys 'count' and 'time' in each element.");
+                    throw new Exception( "Analysis time series must contain keys 'count' and 'time' in each element." );
                 }   
             }   
         }
 
         $this->referenceTimeSeries  = $pReferenceTimeSeries;
         $this->analysisTimeSeries   = $pAnalysisTimeSeries;
-        $this->alphabetSize         = $pAlphabetSize;
+        $this->alphabetSize         = intval( $pAlphabetSize );
         $this->analysisSuffixTree   = array();
 
         $this->initAlphabet();
@@ -73,9 +144,9 @@ class Sax {
      *                                     trees annotated with their surprise values
      */
     public function preprocess( $pSaxReferenceString, array $pSaxAnalysisStrings) {
-        $this->referenceSuffixTree = new SuffixTree($pSaxReferenceString);
+        $this->referenceSuffixTree = new SuffixTree( $pSaxReferenceString );
 
-        foreach ($pSaxAnalysisStrings as $anaString) {
+        foreach ( $pSaxAnalysisStrings as $anaString ) {
             $anaTree = new SuffixTree($anaString);
             $this->annotateSurpriseValues( $this->referenceSuffixTree, $anaTree );
             $this->analysisSuffixTree[] = $anaTree;
@@ -85,11 +156,75 @@ class Sax {
     }
 
 
-    public function tarzan( $pReferenceSaxWord, $pAnalysisSaxWord) {
-        
+    /**
+     * Calculates surprise values of the analysis time series 
+     * in respect to the reference time series. If a surprise value
+     * exceeds the given threshold, the pair ( index, surprise value ) is added
+     * to the result array.
+     * 
+     * @param  integer $pFeatureWindowLength  Feature window length 
+     *                                        used in discretization process for 
+     *                                        dimensionality reduction
+     * @param  integer $pScanningWindowLength Length of substrings to scan the 
+     *                                        analysis series for surprise values
+     * @param  float $pThreshold              Defines a boundary (upper & lower) for 
+     *                                        surprise values. Exceeding surprise values
+     *                                        will be added to the result array
+     * @return array                          Array containing the found surprise values. 
+     *                                        Key is the analysis series sax word, values
+     *                                        representing surprise pairs of ( index, surprise value )
+     */
+    public function tarzan( $pFeatureWindowLength, $pScanningWindowLength, $pThreshold ) {
+        $refStatistics              = $this->computeStatistics( $this->referenceTimeSeries );
+        $normalizedRefSeries        = $this->normalizeTimeSeries( $this->referenceTimeSeries, 
+                                                                  $refStatistics['mean'], 
+                                                                  $refStatistics['stdDev'], 
+                                                                  true );
 
+        $normalizedAnaSeries        = array();
+        foreach ( $this->analysisTimeSeries as $timeSeries ) {
+            $normalizedAnaSeries[] = $this->normalizeTimeSeries( $timeSeries, 
+                                                                 $refStatistics['mean'], 
+                                                                 $refStatistics['stdDev'], 
+                                                                 false );
+        }
+
+        // create sax words
+        $refSaxWord         = $this->discretizeTimeSeries( $normalizedRefSeries, $pScanningWindowLength );
+        $anaSaxWords        = array();
+        foreach ( $normalizedAnaSeries as $anaSeries ) {
+            $anaSaxWords[]  = $this->discretizeTimeSeries( $anaSeries, $pScanningWindowLength );
+        }
+
+        // annotate surprises
+        $annotatedAnaTrees  = $this->preprocess( $refSaxWord, $anaSaxWords );
+
+        // store surprises of each analysis sax word
+        $surprises = array();
+        foreach ( $annotatedAnaTrees as $anaTree ) {
+            // retreive surprise values for each substring
+            foreach ( $anaSaxWords as $anaSaxWord ) {
+                for ($i=0; $i < strlen( $anaSaxWord ) - $pScanningWindowLength; $i++) { 
+                    $w          = substr( $anaSaxWord, $i, $pScanningWindowLength );
+                    $surprise   = $anaTree->getSurpriseValue( $w );
+
+                    if ( $surprise >= $pThreshold ) {
+                        $surprises[$anaSaxWord][] = array( $i, $surprise ); 
+                    }
+                }
+            }
+        }
+
+        return $surprise;
     }
 
+    /**
+     * Calculates the minimum, maximum, standard deviation, mean, sum and the size
+     * of the given time series. It must contain the key 'count' for each entry.
+     * 
+     * @param  array  $pTimeSeries Time series to calculate the described attributes
+     * @return array               An array containing the attributes described above
+     */
     public function computeStatistics( array $pTimeSeries ) {
         $statistics = array('min'       => 0,
                             'max'       => 0,
@@ -160,6 +295,7 @@ class Sax {
             }
             unset($timeSeries);
         }
+
         return $pTimeSeries;
     }
 
@@ -167,24 +303,24 @@ class Sax {
      * Discretizes a given time series to a "sax word", i.e. a sequence
      * of characters indicating the amplitude of the time series.
      * @param  array   $pTimeSeries         Time series to discretize
-     * @param  integer $featureWindowLength Amount of datapoints which will used as a single 
+     * @param  integer $pFeatureWindowLength Amount of datapoints which will used as a single 
      *                                      datapoint (by computing the mean), default is one
      * @return string                       The sax word
      */
-    public function discretizeTimeSeries( array $pTimeSeries, $featureWindowLength = 1 ) {
+    public function discretizeTimeSeries( array $pTimeSeries, $pFeatureWindowLength = 1 ) {
         $nrOfBreakpoints = $this->alphabetSize - 1;
         $breakpoints     = $this->breakpoints[$nrOfBreakpoints];
         $saxWord         = "";
 
         // discretize reference time series
-        for ( $i=0; $i < count( $pTimeSeries ); $i+=$featureWindowLength ) { 
+        for ( $i=0; $i < count( $pTimeSeries ); $i+=$pFeatureWindowLength ) { 
             $datapoint = $pTimeSeries[$i]['count'];
 
             // dimensionality reduction using mean
-            for ( $j=$i+1; $j < $featureWindowLength; $j++ ) { 
+            for ( $j=$i+1; $j < $pFeatureWindowLength; $j++ ) { 
                 $datapoint += $pTimeSeries[$j]['count'];
             }
-            $datapoint /= $featureWindowLength;
+            $datapoint /= $pFeatureWindowLength;
 
             // discretize to sax word using breakpoints        
             for ( $z=0; $z < $nrOfBreakpoints + 1; $z++ ) {
@@ -213,6 +349,17 @@ class Sax {
         $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$pAnalysisTree->root], "" );
     }
 
+    /**
+     * Annotates the analysis tree with surprise values in respect to the reference tree
+     * in a recursive manner. 
+     * 
+     * @param  SuffixTree $pReferenceTree    Tree to use substring occurences as reference
+     * @param  SuffixTree $pAnalysisTree     Tree on which to calculate surprise values
+     * @param  Node       $pNode             Current active node ( on the beginnig: the root node )
+     * @param  string     $representedString Substring of the whole string represented by the 
+     *                                       analysis tree. Starting at the root, ending 
+     *                                       on the active node.
+     */
     private function annotateNode( SuffixTree &$pReferenceTree, SuffixTree &$pAnalysisTree, Node &$pNode, $representedString ) {
         if ( $pNode->start != -1 && $pNode->end != -1 ) {
             // is not the root node
@@ -235,15 +382,15 @@ class Sax {
                 // such that each substring is contained in the reference tree
                 // l = interval size
                 // j = sliding index in representedString
-                for ($l=1; $l < strlen( $representedString ); $l++) { 
+                for ( $l=1; $l < strlen( $representedString ); $l++ ) { 
                     // starting at 1 because length of 0 makes no sense...
                     
-                    if ($largestInterval > 0) {
+                    if ( $largestInterval > 0 ) {
                         // found largest interval in step before
                         break;
                     }
 
-                    for ($j=0; $j < strlen( $representedString ) - $l; $j++) { 
+                    for ( $j=0; $j < strlen( $representedString ) - $l; $j++ ) { 
                         $ret = $pReferenceTree->hasSubstring( substr( $representedString, $j, $l ) );
                         
                         if ( $ret === -1 ) {
@@ -260,10 +407,10 @@ class Sax {
                     $counter        = 0;
                     $denominator    = 1;
 
-                    for ($j=0; $j < strlen( $representedString ) - $largestInterval; $j++) { 
+                    for ( $j=0; $j < strlen( $representedString ) - $largestInterval; $j++ ) { 
                         $counter       *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval ) );
                     }
-                    for ($j=1; $j < strlen( $representedString ) - $largestInterval - 1; $j++) { 
+                    for ( $j=1; $j < strlen( $representedString ) - $largestInterval - 1; $j++ ) { 
                         $denominator   *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval - 1) );
                     }
 
@@ -298,37 +445,38 @@ class Sax {
         $markovChainOrder   = strlen( $pSubstring ) - 2;
         $expectedCount      = 0;
 
-        for ($i=0; $i < strlen( $pSubstring ) - $markovChainOrder; $i++) { 
+        for ( $i=0; $i < strlen( $pSubstring ) - $markovChainOrder; $i++ ) { 
             $counter   *= $pAnalysisTree->getOccurence( substr( $pSubstring, $i, $markovChainOrder ) );
         }
-        for ($i=1; $i < strlen( $pSubstring ) - $markovChainOrder - 1; $i++) { 
+        for ( $i=1; $i < strlen( $pSubstring ) - $markovChainOrder - 1; $i++ ) { 
             $denominator   *= $pAnalysisTree->getOccurence( substr( $pSubstring, $i, $markovChainOrder - 1) );
         }
 
         return $counter / $denominator;
     }
 
-
+    /**
+     * Initialise breakpoints
+     */
     private function initBreakpoints() {
         $this->breakpoints[0]   = -1;
         $this->breakpoints[1]   = -1;
-        $this->breakpoints[2]   = array(-0.43, 0.43);
-        $this->breakpoints[3]   = array(-0.67, 0, 0.67);
-        $this->breakpoints[4]   = array(-0.84, -0.25, 0.25, 0.84);
-        $this->breakpoints[5]   = array(-0.97, -0.43, 0, 0.43, 0.97);
-        $this->breakpoints[6]   = array(-1.07, -0.57, -0.18, 0.18, 0.57, 1.07);
-        $this->breakpoints[7]   = array(-1.15, -0.67, -0.32, 0, 0.32, 0.67, 1.15);
-        $this->breakpoints[8]   = array(-1.22, -0.76, -0.43, -0.14, 0.14, 0.43, 0.76, 1.22);
-        $this->breakpoints[9]   = array(-1.28, -0.84, -0.52, -0.25, 0, 0.25, 0.52, 0.84, 1.28);
+        $this->breakpoints[2]   = array( -0.43, 0.43 );
+        $this->breakpoints[3]   = array( -0.67, 0, 0.67 );
+        $this->breakpoints[4]   = array( -0.84, -0.25, 0.25, 0.84 );
+        $this->breakpoints[5]   = array( -0.97, -0.43, 0, 0.43, 0.97 );
+        $this->breakpoints[6]   = array( -1.07, -0.57, -0.18, 0.18, 0.57, 1.07 );
+        $this->breakpoints[7]   = array( -1.15, -0.67, -0.32, 0, 0.32, 0.67, 1.15 );
+        $this->breakpoints[8]   = array( -1.22, -0.76, -0.43, -0.14, 0.14, 0.43, 0.76, 1.22 );
+        $this->breakpoints[9]   = array( -1.28, -0.84, -0.52, -0.25, 0, 0.25, 0.52, 0.84, 1.28 );
     }
 
+    /**
+     * Initialise alphabet
+     */
     private function initAlphabet() {
-        $this->alphabet = array("a", "b", "c", "d", "e", 
-                                "f", "g", "h", "i", "j",
-                                "k", "l", "m", "n", "o",
-                                "p", "q", "r", "s", "t", 
-                                "u", "v", "w", "x", "y", 
-                                "z");
+        $this->alphabet = array( "a", "b", "c", "d", "e", 
+                                 "f", "g", "h", "i", "j" );
     }
 }
-?>*
+?>
