@@ -56,6 +56,16 @@ class Sax {
         $this->initBreakpoints();
     }
 
+    /**
+     * Creates the suffix trees for the given reference string
+     * and the strings under analysis. Annotates the occurences
+     * of each substring in the corresponding node of the tree.
+     * 
+     * @param  string $pSaxReferenceString Discretized reference string (i.e. sax word)
+     * @param  array  $pSaxAnalysisStrings Array of discretized string representing
+     *                                     the time series under analysis
+     * @return [type]                      [description]
+     */
     public function preprocess( $pSaxReferenceString, array $pSaxAnalysisStrings) {
         // TODO: check if data is discretized+
         $referenceTree  = new SuffixTree($pSaxReferenceString);
@@ -63,10 +73,16 @@ class Sax {
 
         $analysisTrees  = array();
         foreach ($pSaxAnalysisStrings as $anaString) {
-            $analysisTrees[] = new SuffixTree($anaString);
+            $anaTree = new SuffixTree($anaString);
+            $anaTree->annotateSurpriseValues( $referenceTree );
+
+            $analysisTrees[] = $anaTree;
         }
 
-        // TODO: surprise values?
+    }
+
+    public function annotateSurpriseValues($pReferenceSuffixTree, array $pAnalysisSuffixTrees) {
+        // -> in suffix tree
     }
 
     public function tarzan() {
