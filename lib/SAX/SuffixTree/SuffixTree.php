@@ -215,8 +215,8 @@ class SuffixTree {
      * @param  string $pSubstring Substring to get surprise value off
      * @return float              Surprise value for the given substring
      */
-    private function getSurpriseValue( $pSubstring ) {
-        $this->findSurpriseValue( $this->nodes[$this->root], $pSubstring );
+    public function getSurpriseValue( $pSubstring ) {
+        return $this->findSurpriseValue( $this->nodes[$this->root], $pSubstring );
     }
 
     /**
