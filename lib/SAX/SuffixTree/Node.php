@@ -35,6 +35,13 @@ class Node {
     public $nodeIndex;
 
     /**
+     * Surprise value of the string represented by this node
+     * in connection with a given reference tree.
+     * @var float
+     */
+    public $surpriseValue;
+
+    /**
      * Instantiate a new node. 
      * @param integer $pStart     Start index of substring in SuffixTree->text
      * @param integer $pEnd       End index of substring in SuffixTree->text
