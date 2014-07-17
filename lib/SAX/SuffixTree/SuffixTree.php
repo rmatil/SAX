@@ -172,6 +172,68 @@ class SuffixTree {
         }
     }
 
+    /**
+     * Get surprise value of a substring of this tree
+     * 
+     * @param  string $pSubstring Substring to get surprise value off
+     * @return float              Surprise value for the given substring
+     */
+    private function getSurpriseValue( $pSubstring ) {
+        $this->findSurpriseValue( $this->nodes[$this->root], $pSubstring );
+    }
+
+    public function findSurpriseValue( Node $pNode, $pSubstring ) {
+        $length = $pNode->end - $pNode->start;
+        $text   = implode('', $this->text);
+        if ( ($pNode->start != -1 && $pNode->end != -1 ) ) { 
+            // node is not the root node
+            if ( substr( $text , $pNode->start, $length ) === $pSubstring ) { 
+                // found substring
+                return $pNode->surpriseValue;
+            } elseif ( strlen( $pSubstring ) < $length ) {
+                // string is only substring of string represented by pNode
+                $substringLength = strlen($pSubstring);
+                for ($i=0; $i < strlen($text) - $substringLength; $i++) { 
+                    if ( substr( $text, $pNode->start + $i, $substringLength ) === $pSubstring) {
+                        return $pNode->surpriseValue;
+                    }
+                }
+            }
+        }
+
+        // else check childnodes for substring of pSubstring
+        // substring is pSubstring without the letters represented by pNode
+        $ret = $this->upperBound;
+        foreach ($pNode->next as $childKey => $childValue) {
+            if ($ret != $this->upperBound) {
+                // we found the substring in another path already
+                return $ret;
+            }
+            // check begin of substring with begin 
+            // of string represented by this node
+            if ($childKey !== $pSubstring[0]) {
+                // substring does not start with 
+                // the same letter -> check other paths
+                continue;
+            }
+            // found a child starting with the same letter -> check child
+            $childNode          = $this->nodes[$childValue];
+            $childNodeLength    = $childNode->end - $childNode->start;
+
+            // substring ends on the edge to child. Surprise value
+            // is equal to the one of the child
+            if (strlen($pSubstring) <= $childNodeLength) {
+                return $childNode->surpriseValue;
+            }
+
+            // pop letter of pSubstring and check with children
+            $pSubstring = substr($pSubstring, $childNodeLength, strlen($pSubstring));
+            $ret = $this->findSurpriseValue( $childNode,  $pSubstring );
+        }
+        return $ret;
+
+    }
+
     private function findSubstring(Node $pNode, $pSubstring) {
         $length = $pNode->end - $pNode->start;
         $text   = implode('', $this->text);
@@ -211,11 +273,13 @@ class SuffixTree {
             $childNode          = $this->nodes[$childValue];
             $childNodeLength    = $childNode->end - $childNode->start;
 
-            // pop letter of pSubstring and check with children
+            // substring is on the edge to the child
+            // -> no need to go further
             if (strlen($pSubstring) <= $childNodeLength) {
                 return 1;
             }
 
+            // pop letter of pSubstring and check with children
             $pSubstring = substr($pSubstring, $childNodeLength, strlen($pSubstring));
             $ret = $this->findSubstring( $childNode,  $pSubstring );
         }
