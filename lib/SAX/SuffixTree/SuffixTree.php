@@ -219,9 +219,20 @@ class SuffixTree {
         return $this->findSurpriseValue( $this->nodes[$this->root], $pSubstring );
     }
 
+    public function getAllSurpriseValues() {
+        $allSurprises = array();
+        foreach ( $this->nodes as $node ) {
+            if ( $node->start != -1 && $node->end != -1 ) {
+                $allSurprises[] = $node->surpriseValue;
+            }
+        }
+        return $allSurprises;
+    }
+
     /**
      * Tries to find the surprise value of the given substring in the given node.
-     * If not successfull it will try its children if any.
+     * If not successfull for the given string and a child node starts with
+     * the first letter of the given string, it will try its corresponding child.
      * Used in a recursive manner with given node representing the root node
      * at the begin
      * 
@@ -237,7 +248,7 @@ class SuffixTree {
             if ( substr( $text , $pNode->start, $length ) === $pSubstring ) { 
                 // found substring
                 return $pNode->surpriseValue;
-            } elseif ( strlen( $pSubstring ) < $length ) {
+            } elseif ( strlen( $pSubstring ) < $length && strlen( $pSubstring ) > 0 ) {
                 // string is only substring of string represented by pNode
                 $substringLength = strlen($pSubstring);
                 for ( $i=0; $i < strlen($text) - $substringLength; $i++ ) { 
@@ -246,6 +257,9 @@ class SuffixTree {
                     }
                 }
             }
+
+            // shorten
+            $pSubstring = substr($pSubstring, $length, strlen($pSubstring));
         }
 
         // else check childnodes for substring of pSubstring
@@ -267,15 +281,7 @@ class SuffixTree {
             $childNode          = $this->nodes[$childValue];
             $childNodeLength    = $childNode->end - $childNode->start;
 
-            // substring ends on the edge to child. Surprise value
-            // is equal to the one of the child
-            if ( strlen($pSubstring) <= $childNodeLength ) {
-                return $childNode->surpriseValue;
-            }
-
-            // pop letter of pSubstring and check with children
-            $pSubstring = substr( $pSubstring, $childNodeLength, strlen( $pSubstring ) );
-            $ret        = $this->findSurpriseValue( $childNode,  $pSubstring );
+            $ret = $this->findSurpriseValue( $childNode,  $pSubstring );
         }
 
         return $ret;
@@ -301,8 +307,9 @@ class SuffixTree {
             if ( substr( $text , $pNode->start, $length ) === $pSubstring ) { 
                 // found substring
                 return 1;
-            } elseif ( strlen( $pSubstring ) < $length ) {
+            } elseif ( strlen( $pSubstring ) < $length && strlen( $pSubstring ) > 0 ) {
                 // string is only substring of string represented by pNode
+                // i.e. string is on the edge to this node
                 $substringLength = strlen( $pSubstring );
                 for ( $i=0; $i < strlen( $text ) - $substringLength; $i++ ) { 
                     if ( substr( $text, $pNode->start + $i, $substringLength ) === $pSubstring ) {
@@ -310,7 +317,12 @@ class SuffixTree {
                     }
                 }
             }
+
+            // shorten
+            $pSubstring = substr($pSubstring, $length, strlen($pSubstring));
         }
+
+
 
         // else check childnodes for substring of pSubstring
         // substring is pSubstring without the letters represented by pNode
@@ -332,14 +344,7 @@ class SuffixTree {
             $childNode          = $this->nodes[$childValue];
             $childNodeLength    = $childNode->end - $childNode->start;
 
-            // substring is on the edge to the child
-            // -> no need to go further
-            if (strlen($pSubstring) <= $childNodeLength) {
-                return 1;
-            }
-
             // pop letter of pSubstring and check with children
-            $pSubstring = substr( $pSubstring, $childNodeLength, strlen($pSubstring) );
             $ret = $this->findSubstring( $childNode,  $pSubstring );
         }
 
