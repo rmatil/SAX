@@ -212,7 +212,7 @@ class Sax {
             $stats = $this->computeStatistics( $allSurprises );
             printf("mean: %s, stdDev: %s \n", $stats['mean'], $stats['stdDev']);
             
-            $allThreshold[] = $stats['mean'] + $stats['stdDev'];
+            $allThreshold[] = $stats['mean'] + ( $stats['stdDev'] / 2 );
         }
 
         // store surprises of each analysis sax word
@@ -448,11 +448,7 @@ class Sax {
                     printf(" ctr: %s, denom: %s ", $counter, $denominator);
                     $occurenceInRef     = $scaleFactor * ( $counter / $denominator );
                 } else {
-                    printf(" markov ");
-                    // TODO:
-                    // $occurenceInRef     = ( strlen( $word ) - strlen( $representedString ) + 1 )
-                    //                         * $this->computeMarkovProbability( $pAnalysisTree, $representedString );
-
+                    // printf(" markov ");
                     // $product = 1;
                     // for ($i=0; $i < strlen( $representedString ); $i++) { 
                     //     $counter        = $pReferenceTree->getOccurence( substr( $representedString, $i, 1 ) );
@@ -465,16 +461,14 @@ class Sax {
                     // }
                     // printf(" occurence: %s ", $product);
                     // $occurenceInRef     = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
-                    // 
+                    
 
                     $product = 1;
                     for ($i=0; $i < strlen( $representedString ); $i++) { 
                         $counter        = $pAnalysisTree->getOccurence( substr( $representedString, $i, 1 ) );
                         $denominator    = strlen( $word );
 
-                        $substrScaleFactor  = strlen( $representedString ) / strlen( $word );
-
-                        $product *= ( $counter / $denominator );
+                        $product       *= ( $counter / $denominator );
                     }
 
                     $occurenceInRef = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
