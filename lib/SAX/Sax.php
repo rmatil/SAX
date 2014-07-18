@@ -167,14 +167,15 @@ class Sax {
      *                                        dimensionality reduction
      * @param  integer $pScanningWindowLength Length of substrings to scan the 
      *                                        analysis series for surprise values
-     * @param  float $pThreshold              Defines a boundary (upper & lower) for 
-     *                                        surprise values. Exceeding surprise values
+     * @param  array $pThreshold              Defines a boundary (upper & lower) for 
+     *                                        surprise values for each analysis time series
+     *                                        separate. Exceeding surprise values
      *                                        will be added to the result array
      * @return array                          Array containing the found surprise values. 
      *                                        Key is the analysis series sax word, values
      *                                        representing surprise pairs of ( index, surprise value )
      */
-    public function tarzan( $pFeatureWindowLength, $pScanningWindowLength, $pThreshold ) {
+    public function tarzan( $pFeatureWindowLength, $pScanningWindowLength ) {
         $refStatistics              = $this->computeStatistics( $this->referenceTimeSeries );
         $normalizedRefSeries        = $this->normalizeTimeSeries( $this->referenceTimeSeries, 
                                                                   $refStatistics['mean'], 
@@ -187,28 +188,49 @@ class Sax {
                                                              false );
 
         // create sax words
-        $refSaxWord         = $this->discretizeTimeSeries( $normalizedRefSeries, $pScanningWindowLength );
+        $refSaxWord         = $this->discretizeTimeSeries( $normalizedRefSeries, $pFeatureWindowLength );
         $anaSaxWords        = array();
         foreach ( $normalizedAnaSeries as $anaSeries ) {
-            $anaSaxWords[]  = $this->discretizeTimeSeries( $anaSeries, $pScanningWindowLength );
+            $anaSaxWords[]  = $this->discretizeTimeSeries( $anaSeries, $pFeatureWindowLength );
         }
 
         // annotate surprises
         $annotatedAnaTrees  = $this->preprocess( $refSaxWord, $anaSaxWords );
 
+        // compute standard deviation of surprise values and 
+        // using them as threshold
+        $allThreshold = array();
+        foreach ( $annotatedAnaTrees as $anaTree ) {
+            $allSurprises = $anaTree->getAllSurpriseValues();
+
+            for ($i=0; $i < count( $allSurprises ); $i++) { 
+                $val = $allSurprises[$i];
+                unset( $allSurprises[$i] );
+
+                $allSurprises[$i]['count'] = $val;
+            }
+            $stats = $this->computeStatistics( $allSurprises );
+            printf("mean: %s, stdDev: %s \n", $stats['mean'], $stats['stdDev']);
+            
+            $allThreshold[] = $stats['mean'] + $stats['stdDev'];
+        }
+
         // store surprises of each analysis sax word
         $surprises = array();
-        foreach ( $annotatedAnaTrees as $anaTree ) {
+        for ( $i=0; $i < count( $annotatedAnaTrees ); $i++ ) {
+            $anaTree = $annotatedAnaTrees[$i];
             // retreive surprise values for each substring
             $anaSaxWord = implode( '', $anaTree->text );
-            for ($i=0; $i < strlen( $anaSaxWord ) - $pScanningWindowLength; $i++) { 
-                $w          = substr( $anaSaxWord, $i, $pScanningWindowLength );
+            for ($j=0; $j < strlen( $anaSaxWord ) - $pScanningWindowLength + 1; $j++) { 
+                $w          = substr( $anaSaxWord, $j, $pScanningWindowLength );
                 $surprise   = $anaTree->getSurpriseValue( $w );
 
-                if ( $surprise >= $pThreshold ) {
-                    $surprises[$anaSaxWord][] =  array( $i, $surprise );
+                printf("string: %s, surprise: %s, threshold: %s \n", $w, $surprise, $allThreshold[$i]);
+                if ( abs( $surprise ) > $allThreshold[$i] ) {
+                    $surprises[$anaSaxWord][] =  array( $j, $surprise );
                 }
-            }            
+            }    
+            printf("\n");
         }
 
         return $surprises;
@@ -247,7 +269,7 @@ class Sax {
             $statistics['stdDev'] += pow( $entry['count'] - $statistics['mean'], 2 );
         }
         if ( $statistics['size'] > 1 ) {
-            $statistics['stdDev'] = sqrt( $statistics['stdDev'] / ( $statistics['size'] ) );
+            $statistics['stdDev'] = sqrt( $statistics['stdDev'] / ( $statistics['size'] - 1 ) );
         } else {
             // standard deviation of a single element is 0
             $statistics['stdDev'] = 0;
@@ -343,6 +365,7 @@ class Sax {
      */
     public function annotateSurpriseValues( &$pReferenceTree , &$pAnalysisTree) {
         $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$pAnalysisTree->root], "" );
+        printf("\n");
     }
 
     /**
@@ -367,55 +390,99 @@ class Sax {
             $occurenceInRef     = 0;
             $surprise           = 0;
 
-
+            printf("represented string: %s ", $representedString);
             if ( $pReferenceTree->hasSubstring( $representedString ) != -1 ) {
+                printf("trivial ");
                 // trivial case
                 $occurenceInRef = $scaleFactor * $pReferenceTree->getOccurence( $representedString );
             } else {
+                printf("not trivial ");
                 // check reference string for substrings
                 $largestInterval = 0;
                 // find largest length of substrings of represented string in the reference tree
                 // such that each substring is contained in the reference tree
                 // l = interval size
                 // j = sliding index in representedString
-                for ( $l=1; $l < strlen( $representedString ); $l++ ) { 
-                    // starting at 1 because length of 0 makes no sense...
+                $largestFound = false;
+                for ( $l=2; $l < strlen( $representedString ); $l++ ) { 
+                    // starting at 2 because l must be greater than 1 
+                    // according to the formula
                     
-                    if ( $largestInterval > 0 ) {
-                        // found largest interval in step before
-                        break;
-                    }
-
-                    for ( $j=0; $j < strlen( $representedString ) - $l; $j++ ) { 
+                    // if all substrings of the same
+                    // length in this interval ($l) got found
+                    $allSubstringsFound = true;
+                    for ( $j=0; $j < strlen( $representedString ) - $l + 1; $j++ ) { 
                         $ret = $pReferenceTree->hasSubstring( substr( $representedString, $j, $l ) );
-                        
                         if ( $ret === -1 ) {
                             // substring of length '$l' is not contained anymore in 
                             // the reference string -> last interval size was the
                             // largest
-                            $largestInterval = $l - 1;
+                            $largestFound = true;
+                            $allSubstringsFound = false;
                             break;
                         }
                     }
-                }
 
+                    // all strings in this interval were
+                    // found in the tree
+                    if ( $allSubstringsFound == true ) {
+                        $largestInterval = $l;
+                    }
+
+                    // don't increase interval size once a string
+                    // is not found anymore
+                    if ( $largestFound === true ) {
+                        break;
+                    }
+                }
                 if ( $largestInterval > 0 ) {
-                    $counter        = 0;
+                    $counter        = 1;
                     $denominator    = 1;
 
-                    for ( $j=0; $j < strlen( $representedString ) - $largestInterval; $j++ ) { 
+                    for ( $j=0; $j < strlen( $representedString ) - $largestInterval + 1; $j++ ) { 
                         $counter       *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval ) );
                     }
-                    for ( $j=1; $j < strlen( $representedString ) - $largestInterval - 1; $j++ ) { 
-                        $denominator   *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval - 1) );
+                    for ( $j=1; $j < strlen( $representedString ) - $largestInterval + 1; $j++ ) { 
+                        $denominator   *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval - 1 ) );
                     }
-
+                    printf(" ctr: %s, denom: %s ", $counter, $denominator);
                     $occurenceInRef     = $scaleFactor * ( $counter / $denominator );
                 } else {
-                    $occurenceInRef     = $this->computeMarkovProbability( $pAnalysisTree, $representedString );
+                    printf(" markov ");
+                    // TODO:
+                    // $occurenceInRef     = ( strlen( $word ) - strlen( $representedString ) + 1 )
+                    //                         * $this->computeMarkovProbability( $pAnalysisTree, $representedString );
+
+                    // $product = 1;
+                    // for ($i=0; $i < strlen( $representedString ); $i++) { 
+                    //     $counter        = $pReferenceTree->getOccurence( substr( $representedString, $i, 1 ) );
+                    //     $denominator    = count( $pReferenceTree->text );
+
+                    //     $substrScaleFactor = strlen( $representedString ) / count( $pReferenceTree->text );
+
+                    //     printf(" ctr: %s, denom: %s ", $counter, $denominator);
+                    //     $product       *= $substrScaleFactor * ( $counter / $denominator );   
+                    // }
+                    // printf(" occurence: %s ", $product);
+                    // $occurenceInRef     = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
+                    // 
+
+                    $product = 1;
+                    for ($i=0; $i < strlen( $representedString ); $i++) { 
+                        $counter        = $pAnalysisTree->getOccurence( substr( $representedString, $i, 1 ) );
+                        $denominator    = strlen( $word );
+
+                        $substrScaleFactor  = strlen( $representedString ) / strlen( $word );
+
+                        $product *= ( $counter / $denominator );
+                    }
+
+                    $occurenceInRef = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
+                    printf(" occurence: %s ", $occurenceInRef);
+
                 }
             }
-
+            printf("\n \t anaOccurence: %s, refOccurence: %s \n", $pAnalysisTree->getOccurence( $representedString ), $occurenceInRef);
             $pNode->surpriseValue = $pAnalysisTree->getOccurence( $representedString ) - $occurenceInRef;
         }
 
@@ -423,32 +490,6 @@ class Sax {
         foreach ( $pNode->next as $childKey => $childValue ) {
             $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$childValue], $representedString );
         }
-    }
-
-    /**
-     * Calculates the amount of expected occurences of the given substring
-     * in the reference tree by assuming a markov order of the length
-     * of the given substring  - 2
-     * 
-     * @param  string $pSubstring Substring to calculate the expected amount of 
-     *                            occurences
-     * @return float             The expected count of occurences
-     */
-    private function computeMarkovProbability( SuffixTree $pAnalysisTree, $pSubstring ) {
-        $analysisWord       = implode( '', $pAnalysisTree->text );
-        $counter            = 0;
-        $denominator        = 1;
-        $markovChainOrder   = strlen( $pSubstring ) - 2;
-        $expectedCount      = 0;
-
-        for ( $i=0; $i < strlen( $pSubstring ) - $markovChainOrder; $i++ ) { 
-            $counter   *= $pAnalysisTree->getOccurence( substr( $pSubstring, $i, $markovChainOrder ) );
-        }
-        for ( $i=1; $i < strlen( $pSubstring ) - $markovChainOrder - 1; $i++ ) { 
-            $denominator   *= $pAnalysisTree->getOccurence( substr( $pSubstring, $i, $markovChainOrder - 1) );
-        }
-
-        return $counter / $denominator;
     }
 
     /**
