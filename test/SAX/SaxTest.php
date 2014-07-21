@@ -1,7 +1,9 @@
 <?php
 include("../../lib/SAX/Sax.php");
 
-class SaxTest extends PHPUnit_Framework_TestCase {
+use Sax\Sax;
+
+class SaxTest extends \PHPUnit_Framework_TestCase {
 
     protected static $referenceTimeSeries;
 
@@ -175,8 +177,6 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         $sax = new SAX( self::$referenceTimeSeries, self::$analysisTimeSeries );
 
         $surprises = $sax->tarzan( 1, 2 );
-
-        var_dump($surprises);
 
         $this->assertEquals( 0, $surprises['aabaee'][0][0] );
         $this->assertEquals( 4, $surprises['aabaee'][1][0] );

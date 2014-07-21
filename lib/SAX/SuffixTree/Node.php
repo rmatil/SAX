@@ -1,5 +1,7 @@
 <?php
 
+namespace Sax\SuffixTree;
+
 class Node {
 
     /**

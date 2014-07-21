@@ -1,5 +1,10 @@
 <?php
+namespace Sax;
+
 include("SuffixTree/SuffixTree.php");
+
+use Sax\SuffixTree\SuffixTree;
+use Sax\SuffixTree\Node;
 
 class Sax {
 
@@ -97,20 +102,20 @@ class Sax {
      */
     public function __construct( array $pReferenceTimeSeries, array $pAnalysisTimeSeries, $pAlphabetSize = 5) {
         if ( $pAlphabetSize < 3 || $pAlphabetSize > 10 ) {
-            throw new Exception( "Alphabet size must be greater than 2 and smaller than 11." );
+            throw new \Exception( "Alphabet size must be greater than 2 and smaller than 11." );
         }
         if ( count( $pReferenceTimeSeries ) < 1) {
-            throw new Exception( "Reference time series must contain some elements." );
+            throw new \Exception( "Reference time series must contain some elements." );
         }
 
         if ( count( $pAnalysisTimeSeries ) < 1 ) {
-            throw new Exception("Analysis time series must contain some elements.");
+            throw new \Exception("Analysis time series must contain some elements.");
         }
 
         foreach ($pReferenceTimeSeries as $entry) {
             if ( !isset($entry['count']) ||
                  !isset($entry['time'])) {
-                throw new Exception( "Reference time series must contain keys 'count' and 'time' in each element." );
+                throw new \Exception( "Reference time series must contain keys 'count' and 'time' in each element." );
             }    
         }
 
@@ -118,7 +123,7 @@ class Sax {
             foreach ($timeSeries as $entry) {
                 if ( !isset($entry['count']) ||
                      !isset($entry['time'])) {
-                    throw new Exception( "Analysis time series must contain keys 'count' and 'time' in each element." );
+                    throw new \Exception( "Analysis time series must contain keys 'count' and 'time' in each element." );
                 }   
             }   
         }

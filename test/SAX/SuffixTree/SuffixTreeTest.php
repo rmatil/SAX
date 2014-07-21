@@ -1,6 +1,8 @@
 <?php
 include("../../../lib/SAX/SuffixTree/SuffixTree.php");
 
+use Sax\SuffixTree\SuffixTree;
+
 class SuffixTreeTest extends PHPUnit_Framework_TestCase {
 
     private $suffixTree;

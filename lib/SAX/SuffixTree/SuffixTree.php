@@ -1,4 +1,6 @@
 <?php
+namespace Sax\SuffixTree;
+
 include("Node.php");
 
 class SuffixTree {
