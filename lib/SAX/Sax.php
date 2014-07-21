@@ -209,10 +209,8 @@ class Sax {
 
                 $allSurprises[$i]['count'] = $val;
             }
-            $stats = $this->computeStatistics( $allSurprises );
-            printf("mean: %s, stdDev: %s \n", $stats['mean'], $stats['stdDev']);
-            
-            $allThreshold[] = $stats['mean'] + ( $stats['stdDev'] / 2 );
+            $stats = $this->computeStatistics( $allSurprises );            
+            $allThreshold[] = ( $stats['mean'] + ( $stats['stdDev'] / 2 ) > 1) ? 1 : $stats['mean'] + ( $stats['stdDev'] / 2 );
         }
 
         // store surprises of each analysis sax word
@@ -225,12 +223,10 @@ class Sax {
                 $w          = substr( $anaSaxWord, $j, $pScanningWindowLength );
                 $surprise   = $anaTree->getSurpriseValue( $w );
 
-                printf("string: %s, surprise: %s, threshold: %s \n", $w, $surprise, $allThreshold[$i]);
-                if ( abs( $surprise ) > $allThreshold[$i] ) {
+                if ( abs( $surprise ) >= $allThreshold[$i] ) {
                     $surprises[$anaSaxWord][] =  array( $j, $surprise );
                 }
             }    
-            printf("\n");
         }
 
         return $surprises;
@@ -365,7 +361,6 @@ class Sax {
      */
     public function annotateSurpriseValues( &$pReferenceTree , &$pAnalysisTree) {
         $this->annotateNode( $pReferenceTree, $pAnalysisTree, $pAnalysisTree->nodes[$pAnalysisTree->root], "" );
-        printf("\n");
     }
 
     /**
@@ -390,13 +385,10 @@ class Sax {
             $occurenceInRef     = 0;
             $surprise           = 0;
 
-            printf("represented string: %s ", $representedString);
             if ( $pReferenceTree->hasSubstring( $representedString ) != -1 ) {
-                printf("trivial ");
                 // trivial case
                 $occurenceInRef = $scaleFactor * $pReferenceTree->getOccurence( $representedString );
             } else {
-                printf("not trivial ");
                 // check reference string for substrings
                 $largestInterval = 0;
                 // find largest length of substrings of represented string in the reference tree
@@ -445,38 +437,26 @@ class Sax {
                     for ( $j=1; $j < strlen( $representedString ) - $largestInterval + 1; $j++ ) { 
                         $denominator   *= $pReferenceTree->getOccurence( substr( $representedString, $j, $largestInterval - 1 ) );
                     }
-                    printf(" ctr: %s, denom: %s ", $counter, $denominator);
                     $occurenceInRef     = $scaleFactor * ( $counter / $denominator );
                 } else {
-                    // printf(" markov ");
-                    // $product = 1;
-                    // for ($i=0; $i < strlen( $representedString ); $i++) { 
-                    //     $counter        = $pReferenceTree->getOccurence( substr( $representedString, $i, 1 ) );
-                    //     $denominator    = count( $pReferenceTree->text );
-
-                    //     $substrScaleFactor = strlen( $representedString ) / count( $pReferenceTree->text );
-
-                    //     printf(" ctr: %s, denom: %s ", $counter, $denominator);
-                    //     $product       *= $substrScaleFactor * ( $counter / $denominator );   
-                    // }
-                    // printf(" occurence: %s ", $product);
-                    // $occurenceInRef     = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
-                    
-
+                    // approximate the reference occurence by calculating the probability of appearance
+                    // of each character of the representedString in the string represented by 
+                    // the suffix tree
                     $product = 1;
                     for ($i=0; $i < strlen( $representedString ); $i++) { 
-                        $counter        = $pAnalysisTree->getOccurence( substr( $representedString, $i, 1 ) );
-                        $denominator    = strlen( $word );
-
+                        // number of occurences of each char in represented substring
+                        $counter = 0;
+                        for ($j=0; $j < strlen( $representedString ); $j++) { 
+                            if ( $representedString[$j] == $representedString[$i] ) {
+                                $counter++;
+                            }
+                        }
+                        $denominator    = $pAnalysisTree->getOccurence( $representedString[$i] );
                         $product       *= ( $counter / $denominator );
                     }
-
-                    $occurenceInRef = ( strlen( $word ) - strlen( $representedString ) + 1 ) * $product;
-                    printf(" occurence: %s ", $occurenceInRef);
-
+                    $occurenceInRef     = ( 1 - $product );
                 }
             }
-            printf("\n \t anaOccurence: %s, refOccurence: %s \n", $pAnalysisTree->getOccurence( $representedString ), $occurenceInRef);
             $pNode->surpriseValue = $pAnalysisTree->getOccurence( $representedString ) - $occurenceInRef;
         }
 
