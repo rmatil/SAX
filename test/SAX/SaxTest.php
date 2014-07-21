@@ -89,7 +89,7 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 0, $statistics['min'] );
         $this->assertEquals( 6, $statistics['max'] );
         $this->assertEquals( 6, $statistics['size'] );
-        $this->assertEquals( 2.16, round( $statistics['stdDev'], 2) );
+        $this->assertEquals( 2.37, round( $statistics['stdDev'], 2) );
         $this->assertEquals( 18, $statistics['sum'] );
     }
 
@@ -101,12 +101,12 @@ class SaxTest extends PHPUnit_Framework_TestCase {
                                                                 $statistics['mean'], 
                                                                 $statistics['stdDev'],
                                                                 false);
-        $this->assertEquals( -1.8516, round( $normalizedAnalysisSeries[0][0]['count'], 4) );
-        $this->assertEquals( -0.9258, round( $normalizedAnalysisSeries[0][1]['count'], 4) );
-        $this->assertEquals( -0.4629, round( $normalizedAnalysisSeries[0][2]['count'], 4) );
-        $this->assertEquals( -1.8516, round( $normalizedAnalysisSeries[0][3]['count'], 4));
-        $this->assertEquals( 1.3887,  round( $normalizedAnalysisSeries[0][4]['count'], 4));
-        $this->assertEquals( 12.4986, round( $normalizedAnalysisSeries[0][5]['count'], 4));
+        $this->assertEquals( -1.69, round( $normalizedAnalysisSeries[0][0]['count'], 2) );
+        $this->assertEquals( -0.85, round( $normalizedAnalysisSeries[0][1]['count'], 2) );
+        $this->assertEquals( -0.42, round( $normalizedAnalysisSeries[0][2]['count'], 2) );
+        $this->assertEquals( -1.69, round( $normalizedAnalysisSeries[0][3]['count'], 2) );
+        $this->assertEquals(  1.27, round( $normalizedAnalysisSeries[0][4]['count'], 2) );
+        $this->assertEquals( 11.41, round( $normalizedAnalysisSeries[0][5]['count'], 2) );
     }
 
     public function testDiscretizeTimeSeries() {
@@ -169,6 +169,21 @@ class SaxTest extends PHPUnit_Framework_TestCase {
         foreach ( $sax->analysisSuffixTree[0]->nodes as $node ) {
             $this->assertEquals(0, $node->surpriseValue);
         }
+    }
+
+    public function testTarzan() {
+        $sax = new SAX( self::$referenceTimeSeries, self::$analysisTimeSeries );
+
+        $surprises = $sax->tarzan( 1, 2 );
+
+        var_dump($surprises);
+
+        $this->assertEquals( 0, $surprises['aabaee'][0][0] );
+        $this->assertEquals( 4, $surprises['aabaee'][1][0] );
+
+        $this->assertEquals( 0, $surprises['eebeae'][0][0] );        
+
+        $this->assertEquals( 0, $surprises['eebaeb'][0][0] );
     }
 }
 ?>
