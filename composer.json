@@ -1,10 +1,18 @@
 {
     "name": "rmatil/sax",
     "description": "PHP Implementation of Symbolic Aggregate Approximation",
+    "keywords": ["symbolic aggregate approximation","sax"],
+    "homepage": "http://github.com/rmatil/sax",
+    "license": "MIT",
     "require": {
         "php": ">=5.3.0"
     },
     "require-dev": {
     "phpunit/phpunit": "4.1.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "sax": "lib"
+        }
     }
 }
