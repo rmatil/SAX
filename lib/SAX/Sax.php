@@ -6,6 +6,12 @@ include("SuffixTree/SuffixTree.php");
 use Sax\SuffixTree\SuffixTree;
 use Sax\SuffixTree\Node;
 
+/**
+ * Class handling the functionality of the symbolic aggregate approximation
+ * algorithm.
+ *
+ * @author Raphael Matile
+ */
 class Sax {
 
     /**

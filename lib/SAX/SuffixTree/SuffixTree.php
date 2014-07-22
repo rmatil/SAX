@@ -3,6 +3,12 @@ namespace Sax\SuffixTree;
 
 include("Node.php");
 
+/**
+ * Handles creation of the suffix tree.
+ * Based on the implementation of makagonov on {@link http://stackoverflow.com/a/14580102}
+ * 
+ * @author Raphael Matile <raphael.matile@gmail.com>
+ */
 class SuffixTree {
 
     /**
@@ -221,6 +227,12 @@ class SuffixTree {
         return $this->findSurpriseValue( $this->nodes[$this->root], $pSubstring );
     }
 
+    /**
+     * Returns an array containing the surprise values of 
+     * each node of this tree.
+     * 
+     * @return array The array
+     */
     public function getAllSurpriseValues() {
         $allSurprises = array();
         foreach ( $this->nodes as $node ) {
@@ -397,6 +409,12 @@ class SuffixTree {
         return $occurences;
     }
 
+
+    /**
+     * Prints a simple representation of this suffix tree
+     * 
+     * @return string String to print.
+     */
     public function __toString() {
         $s = "\nStart \tEnd \tLink \tidx \tsurprise value \tchildren\n";
         foreach ( $this->nodes as $node ) {

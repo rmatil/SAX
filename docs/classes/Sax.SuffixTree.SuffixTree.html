@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">9</span>
+                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">3</span>
                                 </a>
                             </li>
                             <li>
@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-899578812"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-665959093"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-899578812" class="accordion-body collapse in">
+            <div id="namespace-665959093" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1618016402"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-261343372"></a>
                                 <a href="../namespaces/Sax.html" style="margin-left: 30px; padding-left: 0">Sax</a>
             </div>
-            <div id="namespace-1618016402" class="accordion-body collapse ">
+            <div id="namespace-261343372" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1777069180"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1082145543"></a>
                                 <a href="../namespaces/Sax.SuffixTree.html" style="margin-left: 30px; padding-left: 0">SuffixTree</a>
             </div>
-            <div id="namespace-1777069180" class="accordion-body collapse ">
+            <div id="namespace-1082145543" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -207,8 +207,8 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\Sax\SuffixTree</small>SuffixTree</h1>
-                    <p><em></em></p>
-                    
+                    <p><em>Handles creation of the suffix tree.</em></p>
+                    <p>Based on the implementation of makagonov on <a href="http://stackoverflow.com/a/14580102"><a href="http://stackoverflow.com/a/14580102">http://stackoverflow.com/a/14580102</a></a></p>
                     
                                         
                     <section id="summary">
@@ -300,7 +300,14 @@
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
-                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>Raphael Matile <a href="mailto:raphael.matile@gmail.com">raphael.matile@gmail.com</a></p>
+                                                            </td>
+                        </tr>
                                         </table>
                 </aside>
             </div>
@@ -663,13 +670,17 @@ a new suffix gets inserted</em></p>
             <article class="method">
                 <h3 class="public ">getAllSurpriseValues()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getAllSurpriseValues() </pre>
-                <p><em></em></p>
+                <pre class="signature" style="margin-right: 54px;">getAllSurpriseValues() : array</pre>
+                <p><em>Returns an array containing the surprise values of
+each node of this tree.</em></p>
                 
 
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>The array</p>
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -768,13 +779,16 @@ given string is contained in the suffix tree.</p>
             <article class="method">
                 <h3 class="public ">__toString()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">__toString() </pre>
-                <p><em></em></p>
+                <pre class="signature" style="margin-right: 54px;">__toString() : string</pre>
+                <p><em>Prints a simple representation of this suffix tree</em></p>
                 
 
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>String to print.</p>
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -1142,7 +1156,7 @@ at the begin</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on July 22nd, 2014 at 09:29.
+                    on July 22nd, 2014 at 10:20.
                 </section>
             </section>
         </section>
