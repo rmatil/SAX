@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/Sax.html">\Sax</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">9</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1162026741"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1162026741" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1347276363"></a>
+                                <a href="../namespaces/Sax.html" style="margin-left: 30px; padding-left: 0">Sax</a>
+            </div>
+            <div id="namespace-1347276363" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-948361748"></a>
+                                <a href="../namespaces/Sax.SuffixTree.html" style="margin-left: 30px; padding-left: 0">SuffixTree</a>
+            </div>
+            <div id="namespace-948361748" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Sax.SuffixTree.Node.html">Node</a></li>
+                                                    <li class="class"><a href="../classes/Sax.SuffixTree.SuffixTree.html">SuffixTree</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Sax.Sax.html">Sax</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/Sax.html">\Sax</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\Sax</small>Sax</h1>
+                    <p><em></em></p>
+                    
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Sax.Sax.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_preprocess" class="">preprocess()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_tarzan" class="">tarzan()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_computeStatistics" class="">computeStatistics()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_normalizeTimeSeries" class="">normalizeTimeSeries()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_discretizeTimeSeries" class="">discretizeTimeSeries()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_annotateSurpriseValues" class="">annotateSurpriseValues()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Sax.Sax.html#property_referenceSuffixTree" class="">$referenceSuffixTree</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_analysisSuffixTree" class="">$analysisSuffixTree</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/Sax.Sax.html#method_annotateNode" class="">annotateNode()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_initBreakpoints" class="">initBreakpoints()</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#method_initAlphabet" class="">initAlphabet()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Sax.Sax.html#property_referenceTimeSeries" class="">$referenceTimeSeries</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_analysisTimeSeries" class="">$analysisTimeSeries</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_saxReferenceString" class="">$saxReferenceString</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_saxAnalysisStrings" class="">$saxAnalysisStrings</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_referenceStatistics" class="">$referenceStatistics</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_analysisStatistics" class="">$analysisStatistics</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_alphabet" class="">$alphabet</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_alphabetSize" class="">$alphabetSize</a><br />
+                                                                    <a href="../classes/Sax.Sax.html#property_breakpoints" class="">$breakpoints</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/Sax.html"><div class="path-wrapper">Sax.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Sax\Sax</div>
+                            </dd>
+
+                        
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_referenceSuffixTree" name="property_referenceSuffixTree" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$referenceSuffixTree</h3>
+                <pre class="signature">$referenceSuffixTree : \Sax\SuffixTree\SuffixTree</pre>
+                <p><em>Tree representing all suffixes of
+the reference &quot;sax word&quot;</em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a>
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_analysisSuffixTree" name="property_analysisSuffixTree" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$analysisSuffixTree</h3>
+                <pre class="signature">$analysisSuffixTree : \Sax\SuffixTree\SuffixTree</pre>
+                <p><em>Trees representing all suffixes
+of the analysis sax words</em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a>
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_referenceTimeSeries" name="property_referenceTimeSeries" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$referenceTimeSeries</h3>
+                <pre class="signature">$referenceTimeSeries : array</pre>
+                <p><em>Time series used as reference. Must
+contain keys &#039;count&#039; and &#039;time&#039;</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_analysisTimeSeries" name="property_analysisTimeSeries" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$analysisTimeSeries</h3>
+                <pre class="signature">$analysisTimeSeries : array</pre>
+                <p><em>Array of time series under analysis.</em></p>
+                <p>Contains on each entry arrays representing time series.
+These must contain keys 'count' and 'time'</p>
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_saxReferenceString" name="property_saxReferenceString" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$saxReferenceString</h3>
+                <pre class="signature">$saxReferenceString : string</pre>
+                <p><em>Normalized and discretized reference time series represented
+by a string over the alphabet $alphabet.</em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_saxAnalysisStrings" name="property_saxAnalysisStrings" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$saxAnalysisStrings</h3>
+                <pre class="signature">$saxAnalysisStrings : array</pre>
+                <p><em>Array of ormalized and discretized
+analysis time series represented
+by a string over the alphabet $alphabet.</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_referenceStatistics" name="property_referenceStatistics" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$referenceStatistics</h3>
+                <pre class="signature">$referenceStatistics : array</pre>
+                <p><em>Statistics of the reference time series, such as
+min, max, mean, standard deviation, sum, number of entries</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_analysisStatistics" name="property_analysisStatistics" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$analysisStatistics</h3>
+                <pre class="signature">$analysisStatistics : array</pre>
+                <p><em>Array of statistical values of the analysis time series, such as
+min, max, mean, standard deviation, sum, number of entries</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_alphabet" name="property_alphabet" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$alphabet</h3>
+                <pre class="signature">$alphabet : array</pre>
+                <p><em>The alphabet used to generate the
+&quot;sax words&quot;</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_alphabetSize" name="property_alphabetSize" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$alphabetSize</h3>
+                <pre class="signature">$alphabetSize : integer</pre>
+                <p><em>Size of characters used to generate
+the &quot;sax words&quot;</em></p>
+                
+
+                                <h4>Type</h4>
+                integer
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_breakpoints" name="property_breakpoints" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$breakpoints</h3>
+                <pre class="signature">$breakpoints : array</pre>
+                <p><em>Breakpoints needed to discretize
+a time series to a sax word</em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(array  <span class="argument">$pReferenceTimeSeries</span>, array  <span class="argument">$pAnalysisTimeSeries</span>, integer  <span class="argument">$pAlphabetSize = 5</span>) </pre>
+                <p><em>[__construct description]</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pReferenceTimeSeries </td>
+                                <td><p>Time series used as reference. Must contain</p>
+<pre><code>                                 keys 'count' and 'time' on each entry.
+                                 Count represents the number of occurences
+                                 of an attribute at 'time'</code></pre></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pAnalysisTimeSeries </td>
+                                <td><p>Array of time series to analyse. Each time series</p>
+<pre><code>                                 must contain the keys 'count' and 'time' on each entry.
+                                 Count represents the number of occurences of an
+                                 attribute at 'time'</code></pre></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$pAlphabetSize </td>
+                                <td><p>Size of the alphabet used for discretization process.</p>
+<pre><code>                                 Must be greater than 2 and smaller than 11</code></pre></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_preprocess" name="method_preprocess" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">preprocess()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">preprocess(string  <span class="argument">$pSaxReferenceString</span>, array  <span class="argument">$pSaxAnalysisStrings</span>) : array</pre>
+                <p><em>Creates the suffix trees for the given reference string
+and the strings under analysis. Annotates the occurences
+of each substring in the corresponding node of the tree.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$pSaxReferenceString </td>
+                                <td><p>Discretized reference string (i.e. sax word)</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pSaxAnalysisStrings </td>
+                                <td><p>Array of discretized string representing</p>
+<pre><code>                                the time series under analysis</code></pre></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>Returns an array containing the analysis</p>
+<pre><code>                                trees annotated with their surprise values</code></pre>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_tarzan" name="method_tarzan" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">tarzan()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">tarzan(integer  <span class="argument">$pFeatureWindowLength</span>, integer  <span class="argument">$pScanningWindowLength</span>) : array</pre>
+                <p><em>Calculates surprise values of the analysis time series
+in respect to the reference time series. If a surprise value
+exceeds the given threshold, the pair ( index, surprise value ) is added
+to the result array.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$pFeatureWindowLength </td>
+                                <td><p>Feature window length</p>
+<pre><code>                                   used in discretization process for
+                                   dimensionality reduction</code></pre></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$pScanningWindowLength </td>
+                                <td><p>Length of substrings to scan the</p>
+<pre><code>                                   analysis series for surprise values</code></pre></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>Array containing the found surprise values.</p>
+<pre><code>                                   Key is the analysis series sax word, values
+                                   representing surprise pairs of ( index, surprise value )</code></pre>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_computeStatistics" name="method_computeStatistics" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">computeStatistics()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">computeStatistics(array  <span class="argument">$pTimeSeries</span>) : array</pre>
+                <p><em>Calculates the minimum, maximum, standard deviation, mean, sum and the size
+of the given time series. It must contain the key &#039;count&#039; for each entry.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pTimeSeries </td>
+                                <td><p>Time series to calculate the described attributes</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>An array containing the attributes described above</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_normalizeTimeSeries" name="method_normalizeTimeSeries" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">normalizeTimeSeries()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">normalizeTimeSeries(array  <span class="argument">$pTimeSeries</span>, float  <span class="argument">$pMean</span>, float  <span class="argument">$pStdDev</span>, boolean  <span class="argument">$isReference</span>) : array</pre>
+                <p><em>Normalizes a given time series to N(0,1) with
+a given mean and standard deviation.</em></p>
+                <p>isReference indicates whether the time series is only a one
+dimensional timeseries representing the reference timeseries or
+a two dimensional array representing an array of analysis time series.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pTimeSeries </td>
+                                <td><p>Timeseries to normalize</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>float</td>
+                                <td>$pMean </td>
+                                <td><p>Mean to use for normalization</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>float</td>
+                                <td>$pStdDev </td>
+                                <td><p>Standard deviation to use for normalization</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$isReference </td>
+                                <td><p>True, if $pTimeSeries represents the reference timeseries</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>The normalized timeseries</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_discretizeTimeSeries" name="method_discretizeTimeSeries" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">discretizeTimeSeries()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">discretizeTimeSeries(array  <span class="argument">$pTimeSeries</span>, integer  <span class="argument">$pFeatureWindowLength = 1</span>) : string</pre>
+                <p><em>Discretizes a given time series to a &quot;sax word&quot;, i.e. a sequence
+of characters indicating the amplitude of the time series.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$pTimeSeries </td>
+                                <td><p>Time series to discretize</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$pFeatureWindowLength </td>
+                                <td><p>Amount of datapoints which will used as a single</p>
+<pre><code>                                 datapoint (by computing the mean), default is one</code></pre></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>The sax word</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_annotateSurpriseValues" name="method_annotateSurpriseValues" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">annotateSurpriseValues()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">annotateSurpriseValues(\Sax\SuffixTree\SuffixTree  <span class="argument">$pReferenceTree</span>, \Sax\SuffixTree\SuffixTree  <span class="argument">$pAnalysisTree</span>) </pre>
+                <p><em>Annotates surprise values at each node of the analysis tree
+in context of the reference tree</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td><a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a></td>
+                                <td>$pReferenceTree </td>
+                                <td><p>Suffix tree of the reference time series</p></td>
+                            </tr>
+                                                    <tr>
+                                <td><a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a></td>
+                                <td>$pAnalysisTree </td>
+                                <td><p>Suffix tree of the time series under analysis</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_annotateNode" name="method_annotateNode" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">annotateNode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">annotateNode(\Sax\SuffixTree\SuffixTree  <span class="argument">$pReferenceTree</span>, \Sax\SuffixTree\SuffixTree  <span class="argument">$pAnalysisTree</span>, \Sax\SuffixTree\Node  <span class="argument">$pNode</span>, string  <span class="argument">$representedString</span>) </pre>
+                <p><em>Annotates the analysis tree with surprise values in respect to the reference tree
+in a recursive manner.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td><a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a></td>
+                                <td>$pReferenceTree </td>
+                                <td><p>Tree to use substring occurences as reference</p></td>
+                            </tr>
+                                                    <tr>
+                                <td><a href="../classes/Sax.SuffixTree.SuffixTree.html">\Sax\SuffixTree\SuffixTree</a></td>
+                                <td>$pAnalysisTree </td>
+                                <td><p>Tree on which to calculate surprise values</p></td>
+                            </tr>
+                                                    <tr>
+                                <td><a href="../classes/Sax.SuffixTree.Node.html">\Sax\SuffixTree\Node</a></td>
+                                <td>$pNode </td>
+                                <td><p>Current active node ( on the beginnig: the root node )</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$representedString </td>
+                                <td><p>Substring of the whole string represented by the</p>
+<pre><code>                                  analysis tree. Starting at the root, ending
+                                  on the active node.</code></pre></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initBreakpoints" name="method_initBreakpoints" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">initBreakpoints()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initBreakpoints() </pre>
+                <p><em>Initialise breakpoints</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initAlphabet" name="method_initAlphabet" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">initAlphabet()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initAlphabet() </pre>
+                <p><em>Initialise alphabet</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Sax.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Sax.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/Sax.html">\Sax</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on July 22nd, 2014 at 09:29.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>
