@@ -335,6 +335,7 @@ class Sax {
     public function discretizeTimeSeries( array $pTimeSeries, $pFeatureWindowLength = 1 ) {
         $nrOfBreakpoints = $this->alphabetSize - 1;
         $breakpoints     = $this->breakpoints[$nrOfBreakpoints];
+
         $saxWord         = "";
 
         // discretize reference time series
@@ -349,11 +350,11 @@ class Sax {
 
             // discretize to sax word using breakpoints        
             for ( $z=0; $z < $nrOfBreakpoints + 1; $z++ ) {
-                if ( $datapoint < $breakpoints[$z] ) {
+                if ( isset( $breakpoints[$z] ) && $datapoint < $breakpoints[$z] ) {
                     // found first matching interval 
                     $saxWord .= $this->alphabet[$z];
                     break;
-                } elseif ( $z === $nrOfBreakpoints && $datapoint >= $breakpoints[$z] ) {
+                } elseif ( $z === $nrOfBreakpoints ) {
                     // last datapoint, is greater than the last breakpoint
                     $saxWord .= $this->alphabet[$z];
                 }
