@@ -234,7 +234,7 @@ class Sax {
                 $w          = substr( $anaSaxWord, $j, $pScanningWindowLength );
                 $surprise   = $anaTree->getSurpriseValue( $w );
 
-                if ( abs( $surprise ) >= $allThreshold[$i] ) {
+                if ( abs( $surprise ) >= $allThreshold[$i] && abs( $surprise ) > 0 ) {
                     $surprises[$anaSaxWord][] =  array( $j, $surprise );
                 }
             }    

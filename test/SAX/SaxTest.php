@@ -185,5 +185,28 @@ class SaxTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals( 0, $surprises['eebaeb'][0][0] );
     }
+
+    public function testZeroValues() {
+        $ref  = array(
+                                        array("time" => 123451, "count" => 0),
+                                        array("time" => 123452, "count" => 0),
+                                        array("time" => 123453, "count" => 0),
+                                        array("time" => 123454, "count" => 0),
+                                        array("time" => 123455, "count" => 0),
+                                        array("time" => 123456, "count" => 0));
+
+        $ana   = array(
+                                        array(
+                                            array("time" => 123411, "count" => 0),
+                                            array("time" => 123412, "count" => 0),
+                                            array("time" => 123413, "count" => 0),
+                                            array("time" => 123414, "count" => 0),
+                                            array("time" => 123415, "count" => 0),
+                                            array("time" => 123416, "count" => 0))
+                                    );
+        echo "\n\n";
+        $sax = new Sax( $ref, $ana);
+        var_dump($sax->tarzan(1, 4));
+    }
 }
 ?>
