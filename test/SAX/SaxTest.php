@@ -204,9 +204,10 @@ class SaxTest extends \PHPUnit_Framework_TestCase {
                                             array("time" => 123415, "count" => 0),
                                             array("time" => 123416, "count" => 0))
                                     );
-        echo "\n\n";
         $sax = new Sax( $ref, $ana);
-        var_dump($sax->tarzan(1, 4));
+        $surprises = $sax->tarzan(1, 4);
+
+        $this->assertEquals(0, count( $surprises ) );
     }
 }
 ?>
