@@ -397,8 +397,8 @@ class Sax {
             $word               = implode( '', $pAnalysisTree->text );
             $representedString .= substr( $word, $pNode->start, $pNode->end - $pNode->start );
 
-            $scaleFactor        = ( count( $pReferenceTree->text ) - strlen( $representedString) + 1 ) /
-                                  ( count( $pAnalysisTree->text ) - strlen( $representedString ) + 1 );
+            $scaleFactor        = ( count( $pAnalysisTree->text ) - strlen( $representedString ) + 1 ) /
+                                  ( count( $pReferenceTree->text ) - strlen( $representedString) + 1 );
             $occurenceInRef     = 0;
             $surprise           = 0;
 
