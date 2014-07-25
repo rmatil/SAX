@@ -298,8 +298,13 @@ class Sax {
      * @param  bool $isReference  True, if $pTimeSeries represents the reference timeseries
      * @return array              The normalized timeseries
      */
-    public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $isReference ) {
-        if ( $isReference ) {
+    public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $pIsReference ) {
+        // prevent division by zero
+        if ( $pStdDev === 0 ) {
+            $pStdDev = 1;
+        }
+
+        if ( $pIsReference ) {
             $this->referenceStatistics = $this->computeStatistics( $pTimeSeries );
 
             // normalize
