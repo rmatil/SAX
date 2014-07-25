@@ -300,7 +300,7 @@ class Sax {
      */
     public function normalizeTimeSeries( array $pTimeSeries, $pMean, $pStdDev, $pIsReference ) {
         // prevent division by zero
-        if ( $pStdDev === 0 ) {
+        if ( $pStdDev === floatval(0) ) {
             $pStdDev = 1;
         }
 
