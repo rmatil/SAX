@@ -6,6 +6,10 @@ PHP Implementation of Symbolic Aggregate Approximation ([SAX](http://www.cs.ucr.
 Implementation of the suffix tree is based on the idea of
 "makagonov" on [Stackoverflow](http://stackoverflow.com/a/14580102)
 
+### Installation
+Using composer:  
+```$ php composer.phar require "rmatil/sax":"dev-master"```  
+
 ### Usage
 #### Step 1
 Define a reference time series:   
