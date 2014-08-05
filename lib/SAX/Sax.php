@@ -407,7 +407,7 @@ class Sax {
                 $occurenceInRef = $scaleFactor * $pReferenceTree->getOccurence( $representedString );
             } else {
                 // check reference string for substrings
-                $largestInterval = 0;
+                $largestInterval = 1;
                 // find largest length of substrings of represented string in the reference tree
                 // such that each substring is contained in the reference tree
                 // l = interval size

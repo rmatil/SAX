@@ -42,7 +42,14 @@ class SuffixTreeTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals( -1, $tree->hasSubstring( "aeb" ) );
         $this->assertEquals( -1, $tree->hasSubstring( "aa" ) );
     }
+
+    public function testHasSubstring3() {
+        $string = "ceccbbbbbecbecbebbebbb";
+        $tree = new SuffixTree( $string );
+
+        $this->assertEquals( -1, $tree->hasSubstring( "bbbbbbb" ) );
+        $this->assertEquals( -1, $tree->hasSubstring( "bbbbbb" ) );
+        $this->assertEquals(  1, $tree->hasSubstring( "bbbbb" ) );
+    }
 }
-
-
 ?>

@@ -325,18 +325,16 @@ class SuffixTree {
                 // string is only substring of string represented by pNode
                 // i.e. string is on the edge to this node
                 $substringLength = strlen( $pSubstring );
-                for ( $i=0; $i < strlen( $text ) - $substringLength; $i++ ) { 
-                    if ( substr( $text, $pNode->start + $i, $substringLength ) === $pSubstring ) {
+                for ($i=$pNode->start; $i < $pNode->start + $substringLength; $i++) { 
+                    if ( substr( $text, $i, $substringLength ) === $pSubstring ) {
                         return 1;
                     }
                 }
             }
-
-            // shorten
-            $pSubstring = substr($pSubstring, $length, strlen($pSubstring));
         }
 
-
+        // shorten
+        $pSubstring = substr($pSubstring, $length );
 
         // else check childnodes for substring of pSubstring
         // substring is pSubstring without the letters represented by pNode
