@@ -444,7 +444,7 @@ class Sax {
                         break;
                     }
                 }
-                if ( $largestInterval > 0 ) {
+                if ( $largestInterval > 1 ) {
                     $counter        = 1;
                     $denominator    = 1;
 
