@@ -179,7 +179,7 @@ class SaxTest extends \PHPUnit_Framework_TestCase {
         $surprises = $sax->tarzan( 1, 2 );
 
         $this->assertEquals( 0, $surprises['aabaee'][0][0] );
-        $this->assertEquals( 4, $surprises['aabaee'][1][0] );
+        $this->assertEquals( 1, $surprises['aabaee'][1][0] );
 
         $this->assertEquals( 0, $surprises['eebeae'][0][0] );        
 
@@ -208,6 +208,81 @@ class SaxTest extends \PHPUnit_Framework_TestCase {
         $surprises = $sax->tarzan(1, 4);
 
         $this->assertEquals(0, count( $surprises ) );
+    }
+
+
+    public function testOccurences() {
+        $ref = array(
+                                        array("time" => 1400544000, "count" => 0),
+                                        array("time" => 1400547600, "count" => 0),
+                                        array("time" => 1400551200, "count" => 0),
+                                        array("time" => 1400554800, "count" => 0),
+                                        array("time" => 1400558400, "count" => 0),
+                                        array("time" => 1400562000, "count" => 0),
+                                        array("time" => 1400565600, "count" => 0),
+                                        array("time" => 1400569200, "count" => 2),
+                                        array("time" => 1400572800, "count" => 0),
+                                        array("time" => 1400576400, "count" => 0),
+                                        array("time" => 1400580000, "count" => 0),
+                                        array("time" => 1400583600, "count" => 0),
+                                        array("time" => 1400587200, "count" => 13),
+                                        array("time" => 1400590800, "count" => 22),
+                                        array("time" => 1400594400, "count" => 1),
+                                        array("time" => 1400598000, "count" => 8),
+                                        array("time" => 1400601600, "count" => 1),
+                                        array("time" => 1400605200, "count" => 5),
+                                        array("time" => 1400608800, "count" => 4),
+                                        array("time" => 1400612400, "count" => 4),
+                                        array("time" => 1400616000, "count" => 6),
+                                        array("time" => 1400619600, "count" => 3),
+                                        array("time" => 1400623200, "count" => 0),
+                                        array("time" => 1400626800, "count" => 0),
+                                        array("time" => 1400630400, "count" => 0 )
+                );
+        $ana = array( 
+                                    array( 
+                                        array("time" => 1400630400, "count" => 0),
+                                        array("time" => 1400634000, "count" => 0),
+                                        array("time" => 1400637600, "count" => 0),
+                                        array("time" => 1400641200, "count" => 0),
+                                        array("time" => 1400644800, "count" => 0),
+                                        array("time" => 1400648400, "count" => 0),
+                                        array("time" => 1400652000, "count" => 5),
+                                        array("time" => 1400655600, "count" => 2),
+                                        array("time" => 1400659200, "count" => 5),
+                                        array("time" => 1400662800, "count" => 5),
+                                        array("time" => 1400666400, "count" => 1),
+                                        array("time" => 1400670000, "count" => 3),
+                                        array("time" => 1400673600, "count" => 2),
+                                        array("time" => 1400677200, "count" => 2),
+                                        array("time" => 1400680800, "count" => 2),
+                                        array("time" => 1400684400, "count" => 88),
+                                        array("time" => 1400688000, "count" => 25),
+                                        array("time" => 1400691600, "count" => 15),
+                                        array("time" => 1400695200, "count" => 12),
+                                        array("time" => 1400698800, "count" => 3),
+                                        array("time" => 1400702400, "count" => 10),
+                                        array("time" => 1400706000, "count" => 6),
+                                        array("time" => 1400709600, "count" => 1),
+                                        array("time" => 1400713200, "count" => 2),
+                                        array("time" => 1400716800, "count" => 0)
+                                   )
+                                );
+
+        $sax = new Sax( $ref, $ana, 5);
+        $surprises = $sax->tarzan(1, 3);
+
+        $this->assertEquals(  4, $surprises["bbbbbbdcddbcccceeeecedbcb"][0][0] );
+        $this->assertEquals(  5, $surprises["bbbbbbdcddbcccceeeecedbcb"][1][0] );
+        $this->assertEquals(  6, $surprises["bbbbbbdcddbcccceeeecedbcb"][2][0] );
+        $this->assertEquals(  7, $surprises["bbbbbbdcddbcccceeeecedbcb"][3][0] );
+        $this->assertEquals(  8, $surprises["bbbbbbdcddbcccceeeecedbcb"][4][0] );
+        $this->assertEquals( 10, $surprises["bbbbbbdcddbcccceeeecedbcb"][5][0] );
+        $this->assertEquals( 13, $surprises["bbbbbbdcddbcccceeeecedbcb"][6][0] );
+        $this->assertEquals( 14, $surprises["bbbbbbdcddbcccceeeecedbcb"][7][0] );
+        $this->assertEquals( 17, $surprises["bbbbbbdcddbcccceeeecedbcb"][8][0] );
+        $this->assertEquals( 18, $surprises["bbbbbbdcddbcccceeeecedbcb"][9][0] );
+        $this->assertEquals( 19, $surprises["bbbbbbdcddbcccceeeecedbcb"][10][0] );
     }
 }
 ?>

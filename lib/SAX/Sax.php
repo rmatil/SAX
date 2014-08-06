@@ -220,8 +220,8 @@ class Sax {
 
                 $allSurprises[$i]['count'] = $val;
             }
-            $stats = $this->computeStatistics( $allSurprises );            
-            $allThreshold[] = ( $stats['mean'] + ( $stats['stdDev'] / 2 ) > 1) ? 1 : $stats['mean'] + ( $stats['stdDev'] / 2 );
+            $stats = $this->computeStatistics( $allSurprises );         
+            $allThreshold[] = $stats['mean'] + ( $stats['stdDev'] / 2 );
         }
 
         // store surprises of each analysis sax word
@@ -234,7 +234,7 @@ class Sax {
                 $w          = substr( $anaSaxWord, $j, $pScanningWindowLength );
                 $surprise   = $anaTree->getSurpriseValue( $w );
 
-                if ( abs( $surprise ) >= $allThreshold[$i] && abs( $surprise ) > 0 ) {
+                if ( abs( $surprise ) >= abs( $allThreshold[$i] ) && abs( $surprise ) > 0 ) {
                     $surprises[$anaSaxWord][] =  array( $j, $surprise );
                 }
             }    
@@ -458,20 +458,20 @@ class Sax {
                 } else {
                     // approximate the reference occurence by calculating the probability of appearance
                     // of each character of the representedString in the string represented by 
-                    // the suffix tree
-                    $product = 1;
+                    // the reference suffix tree
+                    $probSum = 0;
                     for ($i=0; $i < strlen( $representedString ); $i++) { 
                         // number of occurences of each char in represented substring
-                        $counter = 0;
+                        $counter = 1;
                         for ($j=0; $j < strlen( $representedString ); $j++) { 
-                            if ( $representedString[$j] == $representedString[$i] ) {
+                            if ( $pReferenceTree->text[$j] == $representedString[$i] ) {
                                 $counter++;
                             }
                         }
                         $denominator    = $pAnalysisTree->getOccurence( $representedString[$i] );
-                        $product       *= ( $counter / $denominator );
+                        $probSum       += ( $counter / $denominator );
                     }
-                    $occurenceInRef     = ( 1 - $product );
+                    $occurenceInRef     = ( count( $pAnalysisTree->text ) + strlen( $representedString ) + 1 ) * $probSum;
                 }
             }
             $pNode->surpriseValue = $pAnalysisTree->getOccurence( $representedString ) - $occurenceInRef;
