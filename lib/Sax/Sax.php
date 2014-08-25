@@ -402,7 +402,7 @@ class Sax {
             $occurenceInRef     = 0;
             $surprise           = 0;
 
-            if ( $pReferenceTree->hasSubstring( $representedString ) != -1 ) {
+            if ( $pReferenceTree->getOccurence( $representedString ) > 0 ) {
                 // trivial case
                 $occurenceInRef = $scaleFactor * $pReferenceTree->getOccurence( $representedString );
             } else {
@@ -421,8 +421,8 @@ class Sax {
                     // length in this interval ($l) got found
                     $allSubstringsFound = true;
                     for ( $j=0; $j < strlen( $representedString ) - $l + 1; $j++ ) { 
-                        $ret = $pReferenceTree->hasSubstring( substr( $representedString, $j, $l ) );
-                        if ( $ret === -1 ) {
+                        $ret = $pReferenceTree->getOccurence( substr( $representedString, $j, $l ) );
+                        if ( $ret === 0 ) {
                             // substring of length '$l' is not contained anymore in 
                             // the reference string -> last interval size was the
                             // largest
